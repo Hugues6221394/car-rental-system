@@ -3,6 +3,7 @@ package com.cars.cars.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.cars.cars.model.User;
@@ -19,22 +20,27 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
-    // @PostMapping(
-    //     consumes = MediaType.APPLICATION_JSON_VALUE,
-    //     produces = MediaType.APPLICATION_JSON_VALUE
-    // )
-    // public ResponseEntity<ApiResponse<User>> createUser(@RequestBody User user) {
-    //     try {
-    //         User createdUser = userService.createUser(user);
-    //         return ResponseEntity.ok()
-    //                            .contentType(MediaType.APPLICATION_JSON)
-    //                            .body(ApiResponse.success(createdUser, "User created successfully"));
-    //     } catch (RuntimeException e) {
-    //         return ResponseEntity.badRequest()
-    //                            .contentType(MediaType.APPLICATION_JSON)
-    //                            .body(ApiResponse.error(e.getMessage()));
-    //     }
-    // }
+    @PostMapping(
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<User>> createUser(@RequestBody User user) {
+        try {
+            User createdUser = userService.createUser(user);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(ApiResponse.success(createdUser, "User created successfully"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(ApiResponse.error(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(ApiResponse.error("Internal server error"));
+        }
+    }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<List<User>>> getAllUsers() {

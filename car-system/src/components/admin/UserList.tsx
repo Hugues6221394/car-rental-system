@@ -99,16 +99,30 @@ const UsersList: React.FC = () => {
   const handleDeleteUser = async (userId: number) => {
     try {
       setIsLoading(userId);
-      await request({
+      const response = await request({
         method: "DELETE",
         url: `/api/users/${userId}`,
       });
 
-      setUsers(users.filter((user) => user.id !== userId));
-      toast.success("User deleted successfully");
-    } catch (error) {
+      if (response.data && response.data.success) {
+        setUsers(users.filter((user) => user.id !== userId));
+        toast.success("User deleted successfully");
+      }
+    } catch (error: any) {
       console.error("Error deleting user:", error);
-      toast.error("Failed to delete user");
+
+      // Show specific error message from backend
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else if (error.message?.includes("reservations")) {
+        toast.error("Cannot delete user with existing reservations");
+      } else if (error.message?.includes("notifications")) {
+        toast.error("Cannot delete user with notifications");
+      } else if (error.message?.includes("references")) {
+        toast.error("Cannot delete user due to related records. Please delete reservations and notifications first.");
+      } else {
+        toast.error("Failed to delete user");
+      }
     } finally {
       setIsLoading(null);
     }

@@ -2,6 +2,7 @@ package com.cars.cars.repository;
 
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -31,4 +32,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     List<Notification> findAllUnread();
 
     long countByUserAndReadFalse(User user);
+
+    @Modifying
+    @Query("DELETE FROM Notification n WHERE n.user.id = :userId")
+    void deleteByUserId(Long userId);
 }

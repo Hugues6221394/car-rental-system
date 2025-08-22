@@ -1,8 +1,11 @@
 package com.cars.cars.service;
 
+import com.cars.cars.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +46,7 @@ public class UserService {
     private final TotpService totpService;
     private final EmailService emailService;
     private final NotificationService  notificationService;
+    private final NotificationRepository notificationRepository;
 
     @Value("${totp.issuer:Cars App}")
     private String appName;
@@ -239,9 +243,17 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found with id: " + id);
+        User user = getUserById(id);
+
+        // Check if user has reservations
+        if (user.getReservations() != null && !user.getReservations().isEmpty()) {
+            throw new RuntimeException("Cannot delete user with existing reservations. Please delete reservations first.");
         }
+
+        // Delete user's notifications first
+        notificationRepository.deleteByUserId(id);
+
+        // Then delete the user
         userRepository.deleteById(id);
     }
 
@@ -285,5 +297,53 @@ public class UserService {
     public User findByEmailEntity(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+    }
+
+    @Transactional
+    public User createUser(User user) {
+        // Check if email already exists
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        // Validate required fields
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            throw new RuntimeException("Email is required");
+        }
+
+        // Add password validation
+        if (user.getPassword().length() < 6) {
+            throw new RuntimeException("Password must be at least 6 characters long");
+        }
+
+//        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+//            throw new RuntimeException("Password is required");
+//        }
+
+        // Set default role if not provided
+        if (user.getRole() == null) {
+            user.setRole(Role.USER);
+        }
+
+        // Then use it in createUser
+        if (userRepository.existsByEmailIgnoreCase(user.getEmail())) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        // Encrypt password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
+        // Set default TOTP settings
+        user.setTotpEnabled(false);
+        user.setTotpVerified(false);
+        user.setTotpSecret(null);
+
+        // Save user
+        User savedUser = userRepository.save(user);
+
+        // Create notification for admin
+        notificationService.createUserRegisteredNotification(savedUser);
+
+        return savedUser;
     }
 }
