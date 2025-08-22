@@ -21,14 +21,16 @@ interface ReservationFormProps {
     endDate: Date;
     status: "PENDING" | "CONFIRMED" | "CANCELLED";
   }>;
+  onReservationSuccess?: (reservationId: number) => void; // Add this prop
 }
 
 export default function ReservationForm({
-  carId,
-  pricePerDay,
-  userId,
-  existingReservations,
-}: ReservationFormProps) {
+                                          carId,
+                                          pricePerDay,
+                                          userId,
+                                          existingReservations,
+                                          onReservationSuccess, // Receive callback from parent
+                                        }: ReservationFormProps) {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,8 +52,8 @@ export default function ReservationForm({
 
       // If end date exists but is before or same as the new start date, reset it
       if (
-        endDate &&
-        (normalizedDate >= endDate || isSameDay(normalizedDate, endDate))
+          endDate &&
+          (normalizedDate >= endDate || isSameDay(normalizedDate, endDate))
       ) {
         setEndDate(null);
       }
@@ -133,21 +135,33 @@ export default function ReservationForm({
       console.log("Reservation response:", response);
 
       if (response.data.success) {
+        const reservationId = response.data.data.id;
+
         toast.success("Reservation created successfully!");
         setReservationSuccess(true);
         setStartDate(null);
         setEndDate(null);
 
-        // Notify the user explicitly with toast
-        toast.success("Your reservation has been created successfully!");
+        // Call the parent callback instead of using router directly
+        if (onReservationSuccess) {
+          onReservationSuccess(reservationId);
+        } else {
+          // Fallback: use window.location if no callback provided
+          setTimeout(() => {
+            if (typeof window !== 'undefined') {
+              window.location.href = `/payment/${reservationId}`;
+            }
+          }, 1500);
+        }
+
       } else {
         throw new Error(
-          response.data.message || "Failed to create reservation"
+            response.data.message || "Failed to create reservation"
         );
       }
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Failed to create reservation";
+          error instanceof Error ? error.message : "Failed to create reservation";
       console.error("Reservation error:", error);
       setError(errorMessage);
       toast.error(errorMessage);
@@ -181,84 +195,84 @@ export default function ReservationForm({
   const minDate = addDays(new Date(), 1);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Start Date
-          </label>
-          <DatePicker
-            selected={startDate}
-            onChange={handleStartDateChange}
-            selectsStart
-            startDate={startDate}
-            endDate={endDate}
-            minDate={minDate}
-            filterDate={(date) => !isDateDisabled(date)}
-            dateFormat="MMMM d, yyyy"
-            className="w-full px-3 py-2 border rounded-lg dark:bg-navy-800 dark:border-navy-700 dark:text-white"
-            placeholderText="Select start date"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Earliest reservation date: tomorrow
-          </p>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Start Date
+            </label>
+            <DatePicker
+                selected={startDate}
+                onChange={handleStartDateChange}
+                selectsStart
+                startDate={startDate}
+                endDate={endDate}
+                minDate={minDate}
+                filterDate={(date) => !isDateDisabled(date)}
+                dateFormat="MMMM d, yyyy"
+                className="w-full px-3 py-2 border rounded-lg dark:bg-navy-800 dark:border-navy-700 dark:text-white"
+                placeholderText="Select start date"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Earliest reservation date: tomorrow
+            </p>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              End Date
+            </label>
+            <DatePicker
+                selected={endDate}
+                onChange={handleEndDateChange}
+                selectsEnd
+                startDate={startDate}
+                endDate={endDate}
+                minDate={startDate ? addDays(startDate, 1) : minDate}
+                filterDate={(date) => !isDateDisabled(date)}
+                dateFormat="MMMM d, yyyy"
+                className="w-full px-3 py-2 border rounded-lg dark:bg-navy-800 dark:border-navy-700 dark:text-white"
+                placeholderText="Select end date"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Must be at least 1 day after start date
+            </p>
+          </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            End Date
-          </label>
-          <DatePicker
-            selected={endDate}
-            onChange={handleEndDateChange}
-            selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate ? addDays(startDate, 1) : minDate}
-            filterDate={(date) => !isDateDisabled(date)}
-            dateFormat="MMMM d, yyyy"
-            className="w-full px-3 py-2 border rounded-lg dark:bg-navy-800 dark:border-navy-700 dark:text-white"
-            placeholderText="Select end date"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Must be at least 1 day after start date
-          </p>
-        </div>
-      </div>
 
-      {startDate && endDate && (
-        <div className="bg-gray-50 dark:bg-navy-900/50 p-4 rounded-lg">
-          <p className="text-lg font-semibold dark:text-white">
-            Total Price: $
-            {(differenceInDays(endDate, startDate) * pricePerDay).toFixed(2)}
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            {differenceInDays(endDate, startDate)} days at ${pricePerDay}/day
-          </p>
-        </div>
-      )}
+        {startDate && endDate && (
+            <div className="bg-gray-50 dark:bg-navy-900/50 p-4 rounded-lg">
+              <p className="text-lg font-semibold dark:text-white">
+                Total Price: $
+                {(differenceInDays(endDate, startDate) * pricePerDay).toFixed(2)}
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {differenceInDays(endDate, startDate)} days at ${pricePerDay}/day
+              </p>
+            </div>
+        )}
 
-      {error && (
-        <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>
-      )}
+        {error && (
+            <div className="text-red-600 dark:text-red-400 text-sm">{error}</div>
+        )}
 
-      {reservationSuccess && (
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
-          <p className="text-green-700 dark:text-green-400">
-            Your reservation was created successfully! You can view all your
-            reservations in your account.
-          </p>
-        </div>
-      )}
+        {reservationSuccess && (
+            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+              <p className="text-green-700 dark:text-green-400">
+                Your reservation was created successfully! You can view all your
+                reservations in your account.
+              </p>
+            </div>
+        )}
 
-      <button
-        type="submit"
-        disabled={isLoading || !startDate || !endDate || !userId}
-        className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 
+        <button
+            type="submit"
+            disabled={isLoading || !startDate || !endDate || !userId}
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700
                  disabled:opacity-50 disabled:cursor-not-allowed transition-colors
                  dark:bg-blue-500 dark:hover:bg-blue-600"
-      >
-        {isLoading ? "Creating Reservation..." : "Confirm Reservation"}
-      </button>
-    </form>
+        >
+          {isLoading ? "Creating Reservation..." : "Confirm Reservation & Pay"}
+        </button>
+      </form>
   );
 }

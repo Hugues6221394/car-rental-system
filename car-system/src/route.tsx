@@ -20,6 +20,7 @@ import { ResetPassword } from "./components/ResetPassword";
 import Contact from "./pages/car/Contact";
 import ProfilePage from "./pages/Profile";
 import NotificationsPage from './pages/Notifications';
+import PaymentPage from "./pages/payment/[reservationId]";
 
 // Create a root error boundary component
 function RootErrorBoundary({ error }: { error: Error }) {
@@ -146,6 +147,11 @@ const notificationsRoute = createRoute({
   component: NotificationsPage,
 });
 
+const paymentRoute = createRoute({
+  getParentRoute: () => protectedLayoutRoute, // or publicLayoutRoute depending on your needs
+  path: "/payment/$reservationId",
+  component: PaymentPage,
+});
 
 // Group routes under their respective layouts
 const routeTree = rootRoute.addChildren([
@@ -166,6 +172,7 @@ const routeTree = rootRoute.addChildren([
     usersRoute,
     profileRoute, // COMMENTED OUT TEMPORARILY
     notificationsRoute,
+    paymentRoute,
   ]),
 ]);
 

@@ -147,6 +147,37 @@ export interface TotpStatusResponse {
   verified: boolean;
 }
 
+// Payment interfaces
+export interface PaymentDTO {
+  id: number;
+  reservationId: number;
+  userEmail: string;
+  carDetails: string;
+  amount: number;
+  paymentMethod: string;
+  transactionId: string;
+  status: 'PENDING' | 'COMPLETED' | 'FAILED' | 'REFUNDED';
+  paymentDetails: string;
+  paymentDate: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreatePaymentDTO {
+  reservationId: number;
+  amount: number;
+  paymentMethod: string;
+  transactionId: string;
+  paymentDetails: string;
+}
+
+export interface InitiatePaymentResponse {
+  payment: PaymentDTO;
+  paymentUrl?: string;
+  clientSecret?: string;
+  orderId?: string;
+}
+
 export const auth = {
   signIn: async (credentials: { email: string; password: string }) => {
     const response = await request({
@@ -269,6 +300,79 @@ export const totp = {
       method: "GET",
       url: "/api/totp/status",
       params: { email },
+    });
+    return response.data.data;
+  },
+};
+
+// Payment functions
+export const payments = {
+  initiate: async (reservationId: number): Promise<InitiatePaymentResponse> => {
+    const response = await request({
+      method: "POST",
+      url: `/api/payments/initiate?reservationId=${reservationId}`,
+    });
+    return response.data.data;
+  },
+
+  create: async (paymentData: CreatePaymentDTO): Promise<PaymentDTO> => {
+    const response = await request({
+      method: "POST",
+      url: "/api/payments",
+      data: paymentData,
+    });
+    return response.data.data;
+  },
+
+  getById: async (paymentId: number): Promise<PaymentDTO> => {
+    const response = await request({
+      method: "GET",
+      url: `/api/payments/${paymentId}`,
+    });
+    return response.data.data;
+  },
+
+  getByReservationId: async (reservationId: number): Promise<PaymentDTO> => {
+    const response = await request({
+      method: "GET",
+      url: `/api/payments/reservation/${reservationId}`,
+    });
+    return response.data.data;
+  },
+
+  updateStatus: async (paymentId: number, status: string): Promise<PaymentDTO> => {
+    const response = await request({
+      method: "PATCH",
+      url: `/api/payments/${paymentId}/status?status=${status}`,
+    });
+    return response.data.data;
+  },
+
+  getAll: async (): Promise<PaymentDTO[]> => {
+    const response = await request({
+      method: "GET",
+      url: "/api/payments",
+    });
+    return response.data.data;
+  }
+};
+
+// Add to your existing api.ts
+export const reservations = {
+  getById: async (reservationId: number): Promise<any> => {
+    const response = await request({
+      method: "GET",
+      url: `/api/reservations/${reservationId}`,
+    });
+    return response.data.data;
+  },
+
+  // Add other reservation methods as needed
+  create: async (reservationData: any): Promise<any> => {
+    const response = await request({
+      method: "POST",
+      url: "/api/reservations",
+      data: reservationData,
     });
     return response.data.data;
   },
