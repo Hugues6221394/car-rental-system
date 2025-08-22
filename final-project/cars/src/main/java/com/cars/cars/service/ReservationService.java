@@ -21,6 +21,7 @@ public class ReservationService {
     private final ReservationRepository reservationRepository;
     private final CarService carService;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @Transactional
     public Reservation createReservation(Reservation reservation) {
@@ -78,6 +79,12 @@ public class ReservationService {
         if (reservation.getStatus() == null) {
             reservation.setStatus(ReservationStatus.PENDING);
         }
+        notificationService.createReservationNotification(
+                reservation.getUser(),
+                reservation.getId(),
+                "created",
+                "New reservation created"
+        );
 
         return reservationRepository.save(reservation);
     }

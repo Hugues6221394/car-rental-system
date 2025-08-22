@@ -64,7 +64,7 @@ const NotificationIcon: React.FC = () => {
                                     'p-3 border-b last:border-b-0 cursor-pointer',
                                     !n.read && 'bg-gray-100 dark:bg-navy-700'
                                 )}
-                                onClick={() => handleMarkAsRead(n.id)} // ✅ mark as read on click
+                                onClick={() => handleMarkAsRead(n.id.toString())} // Convert to string
                             >
                                 <div className="flex justify-between items-start">
                                     <div className="flex-1 min-w-0">
@@ -72,7 +72,8 @@ const NotificationIcon: React.FC = () => {
                                         <p className="text-xs text-gray-500 mt-1">{n.message}</p>
                                         <p className="text-xs text-gray-400 mt-1">{formatTime(n.createdAt)}</p>
 
-                                        {n.relatedReservationId && (
+                                        {/* Use relatedEntityId instead of relatedReservationId */}
+                                        {(n.relatedEntityId && n.relatedEntityType === 'reservation') && (
                                             <Link
                                                 to="/reservations"
                                                 className="text-xs text-blue-600 hover:underline mt-1 block"
@@ -85,7 +86,7 @@ const NotificationIcon: React.FC = () => {
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            handleDelete(n.id);
+                                            handleDelete(n.id.toString()); // Convert to string
                                         }}
                                         className="ml-2 p-1 hover:bg-gray-200 dark:hover:bg-navy-700 rounded"
                                     >

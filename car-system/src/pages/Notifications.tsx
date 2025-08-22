@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Check, Trash2, Bell } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
+import { getReservationId} from '@/types/notification'; // ✅ Import helpers
 
 const NotificationsPage: React.FC = () => {
     const { isAuthenticated } = useAuth();
@@ -22,12 +23,20 @@ const NotificationsPage: React.FC = () => {
 
     const getNotificationIcon = (type: string) => {
         switch (type) {
-            case 'reservation_update':
+            case 'RESERVATION_CREATED':
+            case 'RESERVATION_UPDATED':
+            case 'RESERVATION_CANCELLED':
                 return '📋';
-            case 'system':
-                return '⚙️';
-            case 'promotion':
+            case 'USER_REGISTERED':
+                return '👤';
+            case 'PAYMENT_COMPLETED':
+                return '💳';
+            case 'PAYMENT_FAILED':
+                return '❌';
+            case 'PROMOTION':
                 return '🎁';
+            case 'SYSTEM_ALERT':
+                return '⚙️';
             default:
                 return '🔔';
         }
@@ -84,64 +93,68 @@ const NotificationsPage: React.FC = () => {
                         </div>
                     ) : (
                         <div className="space-y-4">
-                            {notifications.map((notification) => (
-                                <div
-                                    key={notification.id}
-                                    className={`p-4 border rounded-lg ${
-                                        !notification.read
-                                            ? 'bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-800'
-                                            : ''
-                                    }`}
-                                >
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex items-start space-x-3 flex-1">
-                                            <span className="text-lg">{getNotificationIcon(notification.type)}</span>
-                                            <div className="flex-1 min-w-0">
-                                                <div className="flex items-center space-x-2 mb-1">
-                                                    <h4 className="font-semibold">{notification.title}</h4>
-                                                    {!notification.read && (
-                                                        <span className="text-xs bg-blue-500 text-white px-1.5 py-0.5 rounded-full">
-                              New
-                            </span>
+                            {notifications.map((notification) => {
+                                const reservationId = getReservationId(notification);
+
+                                return (
+                                    <div
+                                        key={notification.id}
+                                        className={`p-4 border rounded-lg ${
+                                            !notification.read
+                                                ? 'bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-800'
+                                                : ''
+                                        }`}
+                                    >
+                                        <div className="flex items-start justify-between">
+                                            <div className="flex items-start space-x-3 flex-1">
+                                                <span className="text-lg">{getNotificationIcon(notification.type)}</span>
+                                                <div className="flex-1 min-w-0">
+                                                    <div className="flex items-center space-x-2 mb-1">
+                                                        <h4 className="font-semibold">{notification.title}</h4>
+                                                        {!notification.read && (
+                                                            <span className="text-xs bg-blue-500 text-white px-1.5 py-0.5 rounded-full">
+                                                                New
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <p className="text-muted-foreground mb-2">{notification.message}</p>
+                                                    <p className="text-xs text-muted-foreground">{formatTime(notification.createdAt)}</p>
+
+                                                    {reservationId && (
+                                                        <Link
+                                                            to="/reservations"
+                                                            search={{ id: reservationId.toString() }}
+                                                            className="text-sm text-blue-600 hover:underline mt-2 inline-block"
+                                                        >
+                                                            View Reservation Details
+                                                        </Link>
                                                     )}
                                                 </div>
-                                                <p className="text-muted-foreground mb-2">{notification.message}</p>
-                                                <p className="text-xs text-muted-foreground">{formatTime(notification.createdAt)}</p>
-
-                                                {notification.relatedReservationId && (
-                                                    <Link
-                                                        to="/reservations"
-                                                        search={{ id: notification.relatedReservationId.toString() }}
-                                                        className="text-sm text-blue-600 hover:underline mt-2 inline-block"
-                                                    >
-                                                        View Reservation Details
-                                                    </Link>
-                                                )}
                                             </div>
-                                        </div>
-                                        <div className="flex space-x-2 ml-4">
-                                            {!notification.read && (
+                                            <div className="flex space-x-2 ml-4">
+                                                {!notification.read && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => markAsRead(notification.id.toString())} // ✅ Convert to string
+                                                        className="h-8 w-8"
+                                                    >
+                                                        <Check className="h-4 w-4" />
+                                                    </Button>
+                                                )}
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
-                                                    onClick={() => markAsRead(notification.id)}
+                                                    onClick={() => deleteNotification(notification.id.toString())} // ✅ Convert to string
                                                     className="h-8 w-8"
                                                 >
-                                                    <Check className="h-4 w-4" />
+                                                    <Trash2 className="h-4 w-4" />
                                                 </Button>
-                                            )}
-                                            <Button
-                                                variant="ghost"
-                                                size="icon"
-                                                onClick={() => deleteNotification(notification.id)}
-                                                className="h-8 w-8"
-                                            >
-                                                <Trash2 className="h-4 w-4" />
-                                            </Button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     )}
                 </CardContent>

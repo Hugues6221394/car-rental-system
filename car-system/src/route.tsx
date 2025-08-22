@@ -21,6 +21,8 @@ import Contact from "./pages/car/Contact";
 import ProfilePage from "./pages/Profile";
 import NotificationsPage from './pages/Notifications';
 import PaymentPage from "./pages/payment/[reservationId]";
+import { AdminLayoutWrapper } from '@/components/AdminLayoutWrapper';
+import AdminNotifications from './components/admin/AdminNotifications';
 
 // Create a root error boundary component
 function RootErrorBoundary({ error }: { error: Error }) {
@@ -109,32 +111,59 @@ const carDetailsRoute = createRoute({
   component: CarDetailsPage,
 });
 
+// Admin routes wrapped with AdminLayoutWrapper
 const adminRoute = createRoute({
   getParentRoute: () => protectedLayoutRoute,
   path: "/admin",
-  component: AdminPage,
+  component: () => (
+      <AdminLayoutWrapper>
+        <AdminPage />
+      </AdminLayoutWrapper>
+  ),
+});
+
+const adminNotificationsRoute = createRoute({
+  getParentRoute: () => protectedLayoutRoute,
+  path: "/admin/notifications",
+  component: () => (
+      <AdminLayoutWrapper>
+        <AdminNotifications />
+      </AdminLayoutWrapper>
+  ),
 });
 
 const usersRoute = createRoute({
   getParentRoute: () => protectedLayoutRoute,
   path: "/users",
-  component: User,
+  component: () => (
+      <AdminLayoutWrapper>
+        <User />
+      </AdminLayoutWrapper>
+  ),
 });
 
 const reservationsRoute = createRoute({
   getParentRoute: () => protectedLayoutRoute,
   path: "/reservations",
-  component: ReservationPage,
+  component: () => (
+      <AdminLayoutWrapper>
+        <ReservationPage />
+      </AdminLayoutWrapper>
+  ),
 });
 
 // Admin car creation route as a child of protected layout
 const carCreateRoute = createRoute({
   getParentRoute: () => protectedLayoutRoute,
   path: "/car-create",
-  component: CarCreatePage,
+  component: () => (
+      <AdminLayoutWrapper>
+        <CarCreatePage />
+      </AdminLayoutWrapper>
+  ),
 });
 
-// Profile route - COMMENTED OUT TEMPORARILY
+// Profile route
 const profileRoute = createRoute({
   getParentRoute: () => protectedLayoutRoute,
   path: "/profile",
@@ -148,7 +177,7 @@ const notificationsRoute = createRoute({
 });
 
 const paymentRoute = createRoute({
-  getParentRoute: () => protectedLayoutRoute, // or publicLayoutRoute depending on your needs
+  getParentRoute: () => protectedLayoutRoute,
   path: "/payment/$reservationId",
   component: PaymentPage,
 });
@@ -167,10 +196,11 @@ const routeTree = rootRoute.addChildren([
     carRoute,
     carDetailsRoute,
     adminRoute,
+    adminNotificationsRoute, // Add the admin notifications route
     carCreateRoute,
     reservationsRoute,
     usersRoute,
-    profileRoute, // COMMENTED OUT TEMPORARILY
+    profileRoute,
     notificationsRoute,
     paymentRoute,
   ]),

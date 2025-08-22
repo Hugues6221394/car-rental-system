@@ -5,14 +5,14 @@ import { NotificationProvider } from '@/components/NotificationContext';
 import { router } from "./route";
 
 function App() {
-  return (
-      <AuthProvider>
-        <NotificationProvider>
-          <RouterProvider router={router} />
-          <Toaster />
-        </NotificationProvider>
-      </AuthProvider>
-  );
+    return (
+        <AuthProvider>
+            <NotificationProvider>
+                <RouterProvider router={router} />
+                <Toaster />
+            </NotificationProvider>
+        </AuthProvider>
+    );
 }
 
 export default App;

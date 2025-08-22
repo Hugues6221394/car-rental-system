@@ -1,21 +1,20 @@
-// src/contexts/NotificationContext.tsx
+// src/contexts/AdminNotificationContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { Notification } from '@/types/notification';
 import { notificationService } from '@/lib/notificationService';
 
-interface NotificationContextType {
+interface AdminNotificationContextType {
     notifications: Notification[];
     unreadCount: number;
     loading: boolean;
     refreshNotifications: () => Promise<void>;
     markAsRead: (notificationId: string) => Promise<void>;
     markAllAsRead: () => Promise<void>;
-    deleteNotification: (notificationId: string) => Promise<void>;
 }
 
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
+const AdminNotificationContext = createContext<AdminNotificationContextType | undefined>(undefined);
 
-export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AdminNotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -23,11 +22,15 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const refreshNotifications = async () => {
         try {
             setLoading(true);
-            const response = await notificationService.getUserNotifications();
-            setNotifications(response.data);
-            setUnreadCount(response.data.filter(n => !n.read).length);
+            const [notificationsResponse, unreadCountResponse] = await Promise.all([
+                notificationService.getAdminNotifications(),
+                notificationService.getAdminUnreadCount()
+            ]);
+
+            setNotifications(notificationsResponse.data);
+            setUnreadCount(unreadCountResponse.data);
         } catch (error) {
-            console.error('Failed to fetch notifications:', error);
+            console.error('Failed to fetch admin notifications:', error);
         } finally {
             setLoading(false);
         }
@@ -45,7 +48,6 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
     };
 
-
     const markAllAsRead = async () => {
         try {
             await notificationService.markAllAsRead();
@@ -56,41 +58,34 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
         }
     };
 
-    const deleteNotification = async (notificationId: string) => {
-        try {
-            await notificationService.deleteNotification(notificationId);
-            setNotifications(prev => prev.filter(n => n.id.toString() !== notificationId));
-            setUnreadCount(prev => prev - 1);
-        } catch (error) {
-            console.error('Failed to delete notification:', error);
-        }
-    };
-
     useEffect(() => {
         refreshNotifications();
+
+        // Refresh every 30 seconds for real-time updates
+        const interval = setInterval(refreshNotifications, 30000);
+        return () => clearInterval(interval);
     }, []);
 
     return (
-        <NotificationContext.Provider
+        <AdminNotificationContext.Provider
             value={{
                 notifications,
                 unreadCount,
                 loading,
                 refreshNotifications,
                 markAsRead,
-                markAllAsRead,
-                deleteNotification
+                markAllAsRead
             }}
         >
             {children}
-        </NotificationContext.Provider>
+        </AdminNotificationContext.Provider>
     );
 };
 
-export const useNotifications = () => {
-    const context = useContext(NotificationContext);
+export const useAdminNotifications = () => {
+    const context = useContext(AdminNotificationContext);
     if (context === undefined) {
-        throw new Error('useNotifications must be used within a NotificationProvider');
+        throw new Error('useAdminNotifications must be used within an AdminNotificationProvider');
     }
     return context;
 };

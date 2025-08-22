@@ -42,6 +42,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final TotpService totpService;
     private final EmailService emailService;
+    private final NotificationService  notificationService;
 
     @Value("${totp.issuer:Cars App}")
     private String appName;
@@ -109,6 +110,8 @@ public class UserService {
         user.setTotpVerified(false);
 
         User savedUser = userRepository.save(user);
+
+        notificationService.createUserRegisteredNotification(savedUser);
 
         return userMapper.toUserDto(savedUser);
     }
@@ -248,18 +251,35 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    // UserService.java
     public User getCurrentUser() {
+        // Get the authentication from SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
-            throw new RuntimeException("No authenticated user found");
+            throw new RuntimeException("User not authenticated");
         }
 
-        // 👇 Here we assume your JwtAuthFilter sets the principal as the email
-        String email = authentication.getName();
+        Object principal = authentication.getPrincipal();
 
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found with email: " + email));
+        if (principal instanceof UserDto) {
+            // If principal is UserDto, get the email from it
+            UserDto userDto = (UserDto) principal;
+            return userRepository.findByEmail(userDto.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found with email: " + userDto.getEmail()));
+        } else if (principal instanceof String) {
+            // If principal is String (username/email), use it directly
+            return userRepository.findByEmail((String) principal)
+                    .orElseThrow(() -> new RuntimeException("User not found with email: " + principal));
+        } else if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
+            // If using Spring Security UserDetails
+            org.springframework.security.core.userdetails.UserDetails userDetails =
+                    (org.springframework.security.core.userdetails.UserDetails) principal;
+            return userRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new RuntimeException("User not found with email: " + userDetails.getUsername()));
+        } else {
+            throw new RuntimeException("Unknown principal type: " + principal.getClass().getName());
+        }
     }
 
     public User findByEmailEntity(String email) {

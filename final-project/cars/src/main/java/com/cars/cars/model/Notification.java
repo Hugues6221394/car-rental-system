@@ -15,24 +15,40 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Notification {
 
+    public enum NotificationType {
+        USER_REGISTERED,
+        RESERVATION_CREATED,
+        RESERVATION_UPDATED,
+        RESERVATION_CANCELLED,
+        PAYMENT_COMPLETED,
+        PAYMENT_FAILED,
+        SYSTEM_ALERT,
+        PROMOTION
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference // 👈 child side
+    @JsonBackReference
     private User user;
-
 
     private String title;
     private String message;
 
-    private String type; // e.g., "system", "reservation_update", "promotion"
+    @Enumerated(EnumType.STRING)
+    private NotificationType type;
 
     private boolean read = false;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    private Long relatedReservationId; // optional
+    private Long relatedEntityId; // Can be reservationId, userId, paymentId, etc.
+
+    private String relatedEntityType; // "reservation", "user", "payment"
+
+    // Additional metadata
+    private String metadata; // JSON string for additional data
 }

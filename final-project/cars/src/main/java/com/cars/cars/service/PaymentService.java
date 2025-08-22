@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final ReservationService reservationService;
+    private final NotificationService notificationService;
 
     @Transactional
     public PaymentDTO initiatePayment(Long reservationId) {
@@ -67,6 +68,14 @@ public class PaymentService {
 
         Payment savedPayment = paymentRepository.save(payment);
         reservationService.updateReservationStatus(reservation.getId(), ReservationStatus.CONFIRMED);
+
+        // Create notification
+        notificationService.createPaymentNotification(
+                payment.getReservation().getUser(),
+                payment.getId(),
+                true, // or false if failed
+                "Payment processed successfully"
+        );
 
         return PaymentDTO.fromEntity(savedPayment);
     }
