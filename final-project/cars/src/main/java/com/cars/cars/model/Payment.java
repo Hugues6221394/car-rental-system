@@ -1,9 +1,7 @@
 package com.cars.cars.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,14 +11,16 @@ import java.time.LocalDateTime;
 @Table(name = "payments")
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // @ManyToOne
-    // @JoinColumn(name = "reservation_id", nullable = false)
-    // private Reservation reservation;
+     @ManyToOne
+     @JoinColumn(name = "reservation_id", nullable = false)
+     private Reservation reservation;
 
     @Column(nullable = false)
     private BigDecimal amount;

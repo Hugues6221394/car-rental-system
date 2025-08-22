@@ -1,4 +1,4 @@
- package com.cars.cars.service;
+ package com.cars.cars.dto;
 
  import lombok.Data;
  import java.math.BigDecimal;
