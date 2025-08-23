@@ -1,5 +1,6 @@
 package com.cars.cars.controller;
 
+import com.cars.cars.service.ImageUploadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,9 +28,13 @@ import java.util.stream.Collectors;
 public class CarController {
     private final FileStorageService fileStorageService;
     private final CarService carService;
+    private final ImageUploadService imageUploadService;
 
     private Car normalizeImageUrl(Car car) {
-        if (car != null && car.getImageUrl() != null && !car.getImageUrl().startsWith("/cars/")) {
+        if (car != null && car.getImageUrl() != null
+                && !car.getImageUrl().startsWith("/cars/")
+                && !car.getImageUrl().startsWith("http")) {
+            // only normalize local files, not cloud URLs
             car.setImageUrl("/cars/" + car.getImageUrl());
         }
         return car;
@@ -40,20 +45,13 @@ public class CarController {
     }
 
 
-    @PostMapping(
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
-    )
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Car>> createCar(@RequestBody Car car) {
         try {
             Car createdCar = carService.createCar(car);
-            return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(ApiResponse.success(createdCar, "Car created successfully"));
+            return ResponseEntity.ok(ApiResponse.success(createdCar, "Car created successfully"));
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest()
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .body(ApiResponse.error(e.getMessage()));
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         }
     }
 
@@ -73,6 +71,7 @@ public class CarController {
             return ResponseEntity.notFound().build();
         }
     }
+
 
     @GetMapping("/available")
     public ResponseEntity<ApiResponse<List<Car>>> getAvailableCars() {
@@ -188,5 +187,44 @@ public class CarController {
         Long userId = user.getId();
         List<Car> rented = normalizeImageUrls(carService.getCarsRentedByUser(userId));
         return ResponseEntity.ok(rented);
+    }
+
+//
+//    /**
+//     * Local storage upload (old way)
+//     */
+//    @PostMapping(
+//            value = "/upload-image",
+//            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+//    )
+//    public ResponseEntity<ApiResponse<String>> uploadImageLocal(@RequestParam("file") MultipartFile file) {
+//        try {
+//            if (file == null || file.isEmpty()) {
+//                return ResponseEntity.badRequest().body(ApiResponse.error("No file provided or file is empty"));
+//            }
+//            String fileUrl = fileStorageService.storeFile(file); // saves locally
+//            return ResponseEntity.ok(ApiResponse.success(fileUrl, "Image uploaded successfully (local)"));
+//        } catch (Exception e) {
+//            return ResponseEntity.badRequest().body(ApiResponse.error("Failed local upload: " + e.getMessage()));
+//        }
+//    }
+
+    /**
+     * Cloudinary upload (new way)
+     */
+    @PostMapping(
+            value = "/upload-image/cloud",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<ApiResponse<String>> uploadImageCloud(@RequestParam("file") MultipartFile file) {
+        try {
+            if (file == null || file.isEmpty()) {
+                return ResponseEntity.badRequest().body(ApiResponse.error("No file provided or file is empty"));
+            }
+            String imageUrl = imageUploadService.uploadImage(file); // uploads to Cloudinary
+            return ResponseEntity.ok(ApiResponse.success(imageUrl, "Image uploaded successfully (cloud)"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error("Failed cloud upload: " + e.getMessage()));
+        }
     }
 }

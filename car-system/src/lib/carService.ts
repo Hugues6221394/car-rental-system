@@ -1,4 +1,4 @@
-// carService.ts - Updated with better pagination support
+// src/lib/carService.ts
 import type { ApiResponse, Car, CarFilterDTO, CarStats } from "@/types";
 import { getAuthToken, request } from "./api";
 
@@ -30,10 +30,9 @@ export const carService = {
     return response.data;
   },
 
-  // New method for paginated available cars
   getAvailableCarsPaginated: async (
-    page: number = 0,
-    size: number = 12
+      page: number = 0,
+      size: number = 12
   ): Promise<ApiResponse<PaginatedResponse<Car>>> => {
     const response = await request({
       method: "GET",
@@ -59,8 +58,8 @@ export const carService = {
   },
 
   getCarsByYearRange: async (
-    startYear: number,
-    endYear: number
+      startYear: number,
+      endYear: number
   ): Promise<ApiResponse<Car[]>> => {
     const response = await request({
       method: "GET",
@@ -86,8 +85,8 @@ export const carService = {
   },
 
   updateCar: async (
-    id: number,
-    car: Partial<Car>
+      id: number,
+      car: Partial<Car>
   ): Promise<ApiResponse<Car>> => {
     const response = await request({
       method: "PUT",
@@ -98,8 +97,8 @@ export const carService = {
   },
 
   updateCarAvailability: async (
-    id: number,
-    isAvailable: boolean
+      id: number,
+      isAvailable: boolean
   ): Promise<ApiResponse<Car>> => {
     const response = await request({
       method: "PATCH",
@@ -125,11 +124,10 @@ export const carService = {
   },
 
   searchCars: async (
-    filter: CarFilterDTO,
-    page: number = 0,
-    size: number = 12
+      filter: CarFilterDTO,
+      page: number = 0,
+      size: number = 12
   ): Promise<ApiResponse<PaginatedResponse<Car>>> => {
-    // Convert the filter object to query params
     const params = new URLSearchParams();
 
     if (filter.make) params.append("make", filter.make);
@@ -155,19 +153,15 @@ export const carService = {
     return response.data;
   },
 
-  // Search with text query (for search bar)
   searchCarsWithQuery: async (
-    query: string = "",
-    page: number = 0,
-    size: number = 12,
-    onlyAvailable: boolean = true
+      query: string = "",
+      page: number = 0,
+      size: number = 12,
+      onlyAvailable: boolean = true
   ): Promise<ApiResponse<PaginatedResponse<Car>>> => {
     const params = new URLSearchParams();
 
     if (query.trim()) {
-      // If there's a search query, we'll search in make and model
-      // You might want to add a general search endpoint on your backend
-      // For now, we'll use make as the search parameter
       params.append("make", query);
     }
 
@@ -194,31 +188,25 @@ export const carService = {
       throw new Error("Authentication required");
     }
 
-    console.log("Starting file upload...");
-    console.log("File info:", file.name, file.type, file.size);
-
     try {
       const response = await fetch(
-        "http://localhost:8080/api/cars/upload-image",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
+          "http://localhost:8080/api/cars/upload-image",
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+          }
       );
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Upload response error:", response.status, errorText);
         throw new Error(`Upload failed: ${response.status} ${errorText}`);
       }
 
       const responseData = await response.json();
-      const imageUrl = responseData.data;
-      console.log("Upload successful with result:", imageUrl);
-      return imageUrl;
+      return responseData.data;
     } catch (error) {
       console.error("Upload error:", error);
       throw error;
@@ -226,23 +214,19 @@ export const carService = {
   },
 
   createCar: async (
-    car: Omit<Car, "id">,
-    imageFile?: File
+      car: Omit<Car, "id">,
+      imageFile?: File
   ): Promise<ApiResponse<Car>> => {
     let carData = { ...car };
 
     if (imageFile) {
       try {
-        console.log("Uploading image before creating car...");
         const imageUrl = await carService.uploadImage(imageFile);
-        console.log("Image uploaded successfully, URL:", imageUrl);
         carData.imageUrl = imageUrl;
       } catch (error) {
         console.error("Failed to upload image:", error);
       }
     }
-
-    console.log("Creating car with data:", carData);
 
     const response = await request({
       method: "POST",

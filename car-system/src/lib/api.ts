@@ -1,3 +1,4 @@
+// src/lib/api.ts
 import axios from "axios";
 import CryptoJS from "crypto-js";
 
@@ -178,6 +179,61 @@ export interface InitiatePaymentResponse {
   orderId?: string;
 }
 
+// Reservation interfaces
+export interface Reservation {
+  id: number;
+  carId: number;
+  userId: number;
+  startDate: string;
+  endDate: string;
+  totalPrice: number;
+  status: 'PENDING' | 'CONFIRMED' | 'CANCELLED' | 'COMPLETED';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateReservationData {
+  carId: number;
+  startDate: string;
+  endDate: string;
+  totalPrice: number;
+}
+
+// Reservation Service Functions
+export const reservationService = {
+  cancelReservation: (reservationId: number) =>
+      request({
+        method: "PATCH",
+        url: `/api/reservations/${reservationId}/cancel`
+      }),
+
+  getUserReservations: () =>
+      request({
+        method: "GET",
+        url: "/api/reservations/my-reservations"
+      }),
+
+  createReservation: (data: CreateReservationData) =>
+      request({
+        method: "POST",
+        url: "/api/reservations",
+        data
+      }),
+
+  getReservationById: (id: number) =>
+      request({
+        method: "GET",
+        url: `/api/reservations/${id}`
+      }),
+
+  updateReservationStatus: (id: number, status: string) =>
+      request({
+        method: "PATCH",
+        url: `/api/reservations/${id}/status`,
+        data: { status }
+      }),
+};
+
 export const auth = {
   signIn: async (credentials: { email: string; password: string }) => {
     const response = await request({
@@ -357,7 +413,7 @@ export const payments = {
   }
 };
 
-// Add to your existing api.ts
+// Legacy reservation functions (for backward compatibility)
 export const reservations = {
   getById: async (reservationId: number): Promise<any> => {
     const response = await request({
@@ -367,7 +423,6 @@ export const reservations = {
     return response.data.data;
   },
 
-  // Add other reservation methods as needed
   create: async (reservationData: any): Promise<any> => {
     const response = await request({
       method: "POST",

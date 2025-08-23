@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15
+    container_name: cars-postgres
+    environment:
+      POSTGRES_DB: rsp
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: trigga
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - cars-network
+
+  # Spring Boot Application
+  cars-app:
+    build: .
+    container_name: cars-application
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/rsp
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: trigga
+      SERVER_PORT: 8080
+      FILE_UPLOAD_DIR: /app/uploads/cars
+      CLOUDINARY_CLOUD_NAME: dl1odfhfa
+      CLOUDINARY_API_KEY: 897119928293383
+      CLOUDINARY_API_SECRET: 16964T2ABxBvQjtG7RlN33O49Ww
+      SECURITY_JWT_TOKEN_SECRET_KEY: your-secret-key-change-in-production-make-this-very-long-and-secure
+      SECURITY_JWT_TOKEN_ACCESS_EXPIRATION: 3600
+      SECURITY_JWT_TOKEN_REFRESH_EXPIRATION: 2592000
+      APP_FRONTEND_URL: http://localhost:5173
+    ports:
+      - "8080:8080"
+    volumes:
+      - uploads_volume:/app/uploads
+    depends_on:
+      - postgres
+    networks:
+      - cars-network
+
+volumes:
+  postgres_data:
+  uploads_volume:
+
+networks:
+  cars-network:
+    driver: bridge

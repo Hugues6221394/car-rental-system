@@ -1,4 +1,4 @@
-// CarsPage.tsx
+// src/pages/car/car.tsx
 import { useEffect, useState } from "react";
 import { carService, type PaginatedResponse } from "@/lib/carService";
 import { getUser } from "@/lib/api";
@@ -40,7 +40,6 @@ const CarsPage = () => {
 
       let carsPage = carsResponse?.data;
       if (carsPage && search) {
-        // Filter search client-side
         carsPage = {
           ...carsPage,
           content: carsPage.content.filter(
@@ -65,6 +64,10 @@ const CarsPage = () => {
     }
   };
 
+  const handleReservationUpdate = () => {
+    fetchCars(currentPage);
+  };
+
   useEffect(() => {
     fetchCars(0);
   }, [search]);
@@ -83,27 +86,13 @@ const CarsPage = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center">
-                <svg
-                    className="w-6 h-6 text-red-600 dark:text-red-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                  <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
+                <svg className="w-6 h-6 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
               </div>
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  Welcome back
-                </p>
-                <p className="font-semibold text-gray-900 dark:text-white">
-                  {userName}
-                </p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Welcome back</p>
+                <p className="font-semibold text-gray-900 dark:text-white">{userName}</p>
               </div>
             </div>
           </div>
@@ -136,9 +125,11 @@ const CarsPage = () => {
                             imageUrl: car.imageUrl,
                             isAvailable: car.isAvailable,
                             isRented: car.isRented,
+                            reservations: car.reservations,
                           }}
                           showReserveButton={false}
                           currentDate={currentDate}
+                          onReservationUpdate={handleReservationUpdate}
                       />
                   ))}
                 </div>
@@ -156,9 +147,7 @@ const CarsPage = () => {
             {loading && currentPage > 0 ? (
                 <div className="flex items-center justify-center py-8">
                   <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-500"></div>
-                  <span className="ml-2 text-gray-600 dark:text-gray-400">
-                Loading cars...
-              </span>
+                  <span className="ml-2 text-gray-600 dark:text-gray-400">Loading cars...</span>
                 </div>
             ) : (
                 <>
@@ -176,9 +165,11 @@ const CarsPage = () => {
                               imageUrl: car.imageUrl,
                               isAvailable: car.isAvailable,
                               isRented: car.isRented,
+                              reservations: car.reservations,
                             }}
                             showReserveButton={true}
                             currentDate={currentDate}
+                            onReservationUpdate={handleReservationUpdate}
                         />
                     ))}
                   </div>
@@ -197,26 +188,11 @@ const CarsPage = () => {
                   {!loading && carsData.content.length === 0 && (
                       <div className="flex flex-col items-center justify-center py-12 px-4 rounded-xl bg-gray-50 dark:bg-gray-900/50">
                         <div className="text-center space-y-4">
-                          <svg
-                              className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                          >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-                            />
+                          <svg className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                           </svg>
-                          <p className="text-gray-600 dark:text-gray-400">
-                            No cars found matching your search.
-                          </p>
-                          <button
-                              onClick={() => setSearch("")}
-                              className="text-red-600 dark:text-red-400 hover:underline"
-                          >
+                          <p className="text-gray-600 dark:text-gray-400">No cars found matching your search.</p>
+                          <button onClick={() => setSearch("")} className="text-red-600 dark:text-red-400 hover:underline">
                             Clear search
                           </button>
                         </div>

@@ -1,3 +1,4 @@
+// src/pages/admin/reservation.tsx
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PageHeaders";
 import { request } from "@/lib/api";
@@ -13,23 +14,23 @@ export default function ReservationPage() {
   const [loading, setLoading] = useState(true);
 
   const pendingCount = reservations.filter(
-    (r) => r.status === "PENDING"
+      (r) => r.status === "PENDING"
   ).length;
   const confirmedCount = reservations.filter(
-    (r) => r.status === "CONFIRMED"
+      (r) => r.status === "CONFIRMED"
   ).length;
   const completedCount = reservations.filter(
-    (r) => r.status === "COMPLETED"
+      (r) => r.status === "COMPLETED"
   ).length;
   const totalRevenue = reservations
-    .filter((r) => r.status === "COMPLETED")
-    .reduce((acc, r) => acc + r.totalPrice, 0);
+      .filter((r) => r.status === "COMPLETED")
+      .reduce((acc, r) => acc + r.totalPrice, 0);
 
   useEffect(() => {
     if (user?.role === "ADMIN") {
       fetchReservations();
     }
-  }, []);
+  }, [user]);
 
   const fetchReservations = async () => {
     try {
@@ -50,57 +51,56 @@ export default function ReservationPage() {
 
   if (!user || user.role !== "ADMIN") {
     return (
-      <PageContainer>
-        <div className="p-6 text-center text-red-500">
-          You must be an admin to view this page
-        </div>
-      </PageContainer>
+        <PageContainer>
+          <div className="p-6 text-center text-red-500">
+            You must be an admin to view this page
+          </div>
+        </PageContainer>
     );
   }
 
   return (
-    <PageContainer className="p-0">
-      <PageHeader title="Reservations Management" username={user.email} />
+      <PageContainer className="p-0">
+        <PageHeader title="Reservations Management" username={user.email} />
 
-      <div className="p-6 bg-gray-50 dark:bg-navy-900/50 min-h-[calc(100vh-16rem)]">
-        {/* Stats Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <AdminStatsCard
-            title="Pending Reservations"
-            value={pendingCount}
-            icon="calendar"
-            trend="Awaiting confirmation"
-            highlight={pendingCount > 0}
-          />
-          <AdminStatsCard
-            title="Confirmed Reservations"
-            value={confirmedCount}
-            icon="calendar"
-            trend="In progress"
-          />
-          <AdminStatsCard
-            title="Completed Reservations"
-            value={completedCount}
-            icon="calendar"
-            trend="Successfully finished"
-          />
-          <AdminStatsCard
-            title="Total Revenue"
-            value={`$${totalRevenue.toFixed(2)}`}
-            icon="money"
-            trend="From completed reservations"
-          />
+        <div className="p-6 bg-gray-50 dark:bg-navy-900/50 min-h-[calc(100vh-16rem)]">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+            <AdminStatsCard
+                title="Pending Reservations"
+                value={pendingCount}
+                icon="calendar"
+                trend="Awaiting confirmation"
+                highlight={pendingCount > 0}
+            />
+            <AdminStatsCard
+                title="Confirmed Reservations"
+                value={confirmedCount}
+                icon="calendar"
+                trend="In progress"
+            />
+            <AdminStatsCard
+                title="Completed Reservations"
+                value={completedCount}
+                icon="calendar"
+                trend="Successfully finished"
+            />
+            <AdminStatsCard
+                title="Total Revenue"
+                value={`$${totalRevenue.toFixed(2)}`}
+                icon="money"
+                trend="From completed reservations"
+            />
+          </div>
+
+          {loading ? (
+              <div className="text-center">Loading reservations...</div>
+          ) : (
+              <ReservationsList
+                  reservations={reservations}
+                  onUpdate={fetchReservations}
+              />
+          )}
         </div>
-
-        {loading ? (
-          <div className="text-center">Loading reservations...</div>
-        ) : (
-          <ReservationsList
-            reservations={reservations}
-            onUpdate={fetchReservations}
-          />
-        )}
-      </div>
-    </PageContainer>
+      </PageContainer>
   );
 }

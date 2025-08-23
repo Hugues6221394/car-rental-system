@@ -31,6 +31,21 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .and()
                 .authorizeHttpRequests((requests) -> requests
+                        // Public endpoints - allow without authentication
+                        .requestMatchers(HttpMethod.GET,
+                                "/",
+                                "/index.html",
+                                "/home",
+                                "/api/cars",           // Allow public access to list cars
+                                "/api/cars/**",        // Allow public access to car details
+                                "/actuator/health",    // Health check
+                                "/favicon.ico",
+                                "/static/**",
+                                "/public/**",
+                                "/cars/**"            // File uploads access
+                        ).permitAll()
+
+                        // Auth endpoints - allow without authentication
                         .requestMatchers(HttpMethod.POST,
                                 "/api/auth/signin",
                                 "/api/auth/signup",
@@ -44,6 +59,7 @@ public class SecurityConfig {
                                 "/api/auth/verify-totp-setup"
                         ).permitAll()
 
+                        // Authenticated endpoints
                         .requestMatchers(HttpMethod.POST, "/api/payments/initiate").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/payments").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/api/payments/*/status").authenticated()
@@ -52,7 +68,14 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/totp/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/images/**").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/payments/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/images/upload").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/cars/upload-image/cloud").authenticated()
                         .requestMatchers("/api/notifications/**").authenticated()
+
+                        // Allow GET requests to cars for public access
+                        .requestMatchers(HttpMethod.GET, "/api/cars/**").permitAll()
+
+                        // All other requests require authentication
                         .anyRequest().authenticated()
                 );
         return http.build();
@@ -64,6 +87,12 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
+                        .allowedOrigins("http://localhost:5173")
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowCredentials(true);
+
+                // Allow CORS for static resources too
+                registry.addMapping("/**")
                         .allowedOrigins("http://localhost:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowCredentials(true);
