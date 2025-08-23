@@ -19,11 +19,13 @@ export const RESERVATION_STATUSES: ReservationStatus[] = [
 interface ReservationsListProps {
   reservations: ReservationDTO[];
   onUpdate: () => void;
+  onDelete: (reservationId: string) => void;
 }
 
 export default function ReservationsList({
                                            reservations: initialReservations,
                                            onUpdate,
+                                           onDelete,
                                          }: ReservationsListProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<ReservationStatus | "ALL">(
@@ -57,6 +59,32 @@ export default function ReservationsList({
     }
   };
 
+  const handleDelete = async (reservationId: string) => {
+    if (!confirm("Are you sure you want to delete this reservation? This action cannot be undone.")) {
+      return;
+    }
+
+    try {
+      setIsLoading(reservationId);
+      const response = await request({
+        method: "DELETE",
+        url: `/api/reservations/${reservationId}`,
+      });
+
+      if (response.data.success) {
+        toast.success("Reservation deleted successfully");
+        onDelete(reservationId);
+      }
+    } catch (error: any) {
+      console.error("Delete error:", error);
+      toast.error(
+          error.response?.data?.message || "Failed to delete reservation"
+      );
+    } finally {
+      setIsLoading(null);
+    }
+  };
+
   const getStatusColor = (status: ReservationStatus) => {
     switch (status) {
       case "PENDING":
@@ -66,7 +94,7 @@ export default function ReservationsList({
       case "CANCELLED":
         return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
       case "COMPLETED":
-        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
     }
@@ -129,7 +157,7 @@ export default function ReservationsList({
                             <img
                                 src={reservation.carImageUrl}
                                 alt={reservation.carDetails}
-                                className="object-cover"
+                                className="w-full h-full object-cover"
                             />
                         ) : (
                             <div className="flex items-center justify-center h-full text-gray-400">
@@ -204,9 +232,23 @@ export default function ReservationsList({
                                         handleStatusChange(reservation.id, "COMPLETED")
                                     }
                                     disabled={isLoading === reservation.id}
-                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
                                 >
                                   Complete
+                                </button>
+                            )}
+
+                            {/* Delete button for completed reservations */}
+                            {reservation.status === "COMPLETED" && (
+                                <button
+                                    onClick={() => handleDelete(reservation.id)}
+                                    disabled={isLoading === reservation.id}
+                                    className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50"
+                                    title="Delete reservation"
+                                >
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
                                 </button>
                             )}
                           </div>
