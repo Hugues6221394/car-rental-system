@@ -64,6 +64,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/payments").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/api/payments/*/status").authenticated()
                         .requestMatchers(HttpMethod.PATCH, "/api/reservations/*/status").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/reservations/*/cancel").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/totp/status").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/totp/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/images/**").authenticated()

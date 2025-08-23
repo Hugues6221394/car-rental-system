@@ -1,13 +1,10 @@
 package com.cars.cars.service;
 
+import com.cars.cars.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cars.cars.model.Car;
-import com.cars.cars.model.Reservation;
-import com.cars.cars.model.ReservationStatus;
-import com.cars.cars.model.User;
 import com.cars.cars.repository.ReservationRepository;
 
 import java.time.LocalDate;
@@ -158,5 +155,67 @@ public class ReservationService {
         }
         
         reservationRepository.deleteById(id);
+    }
+
+    // In ReservationService.java - Fix the cancelReservation method
+    @Transactional
+    public Reservation cancelReservation(Long reservationId, String userEmail) {
+        System.out.println("DEBUG: Cancelling reservation ID: " + reservationId);
+        System.out.println("DEBUG: Requested by user: " + userEmail);
+
+        // Use a more efficient query to get reservation with user and car loaded
+        Reservation reservation = reservationRepository.findByIdWithUserAndCar(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reservation not found with id: " + reservationId));
+
+        System.out.println("DEBUG: Found reservation with user ID: " + reservation.getUser().getId());
+
+        User user = userService.findByEmailEntity(userEmail);
+        System.out.println("DEBUG: Found user with ID: " + user.getId() + ", Role: " + user.getRole());
+
+        // Check if user owns the reservation or is admin
+        boolean isOwner = reservation.getUser().getId().equals(user.getId());
+        boolean isAdmin = user.getRole().equals(Role.ADMIN);
+
+        System.out.println("DEBUG: Is owner: " + isOwner + ", Is admin: " + isAdmin);
+        System.out.println("DEBUG: Reservation status: " + reservation.getStatus());
+
+        if (!isOwner && !isAdmin) {
+            throw new RuntimeException("You are not authorized to cancel this reservation");
+        }
+
+        // Check if reservation can be cancelled (only PENDING status can be cancelled by user)
+        if (!reservation.getStatus().equals(ReservationStatus.PENDING) && user.getRole().equals(Role.USER)) {
+            throw new RuntimeException("Only pending reservations can be cancelled");
+        }
+
+        // Update reservation status to CANCELLED
+        reservation.setStatus(ReservationStatus.CANCELLED);
+        reservation.setUpdatedAt(LocalDateTime.now());
+
+        // If car was reserved, make it available again - but check if there are other active reservations
+        if (reservation.getCar() != null) {
+            Car car = reservation.getCar();
+
+            // Only make car available if there are no other active reservations
+            List<Reservation> activeReservations = reservationRepository.findActiveReservationsForCar(car.getId());
+            boolean hasOtherActiveReservations = activeReservations.stream()
+                    .anyMatch(r -> !r.getId().equals(reservationId) &&
+                            (r.getStatus() == ReservationStatus.PENDING || r.getStatus() == ReservationStatus.CONFIRMED));
+
+            if (!hasOtherActiveReservations) {
+                car.setIsAvailable(true);
+                carService.updateCar(car.getId(), car);
+            }
+        }
+
+        // Create notification
+        notificationService.createReservationNotification(
+                reservation.getUser(),
+                reservation.getId(),
+                "cancelled",
+                "Reservation cancelled by user"
+        );
+
+        return reservationRepository.save(reservation);
     }
 }

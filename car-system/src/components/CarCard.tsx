@@ -30,6 +30,7 @@ type CarCardProps = {
     reservations?: Reservation[];
   };
   showReserveButton?: boolean;
+  showCancelButton?: boolean
   currentDate?: string;
   onToggleAvailability?: (isAvailable: boolean) => void;
   onDelete?: () => void;
@@ -39,6 +40,7 @@ type CarCardProps = {
 const CarCard: React.FC<CarCardProps> = ({
                                            car,
                                            showReserveButton = true,
+                                           showCancelButton = false,
                                            currentDate,
                                            onToggleAvailability,
                                            onDelete,
@@ -282,6 +284,20 @@ const CarCard: React.FC<CarCardProps> = ({
                   )}
                 </div>
             )}
+            {/* Add cancel button for rented cars */}
+            {showCancelButton && hasPendingReservation() && (
+                <Button
+                    onClick={handleAbortReservation}
+                    disabled={loading}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-1 bg-yellow-100 text-yellow-700 hover:bg-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:hover:bg-yellow-900/50"
+                >
+                  <BanIcon className="w-4 h-4" />
+                  {loading ? "Cancelling..." : "Cancel Reservation"}
+                </Button>
+            )}
+
           </div>
         </div>
       </div>

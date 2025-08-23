@@ -1,8 +1,11 @@
 package com.cars.cars.controller;
 
+import com.cars.cars.dto.UserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import com.cars.cars.model.Car;
@@ -160,6 +163,53 @@ public class ReservationController {
         } catch (RuntimeException e) {
             return ResponseEntity.notFound()
                 .build();
+        }
+    }
+
+    // In ReservationController.java - Fix the cancelReservation method
+    // In ReservationController.java - Fix the cancelReservation method
+    @PatchMapping(
+            value = "/{id}/cancel",
+            produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<ApiResponse<ReservationDTO>> cancelReservation(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        try {
+            // Extract the email from the authentication principal
+            String userEmail;
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof UserDto) {
+                // If principal is UserDto, extract the email
+                UserDto userDto = (UserDto) principal;
+                userEmail = userDto.getEmail();
+            } else if (principal instanceof org.springframework.security.core.userdetails.UserDetails) {
+                // If using Spring Security UserDetails
+                org.springframework.security.core.userdetails.UserDetails userDetails =
+                        (org.springframework.security.core.userdetails.UserDetails) principal;
+                userEmail = userDetails.getUsername();
+            } else if (principal instanceof String) {
+                // If principal is already a string (email)
+                userEmail = (String) principal;
+            } else {
+                throw new RuntimeException("Unknown principal type: " + principal.getClass().getName());
+            }
+
+            System.out.println("Controller: Cancelling reservation " + id + " for user: " + userEmail);
+
+            Reservation cancelledReservation = reservationService.cancelReservation(id, userEmail);
+            ReservationDTO dto = ReservationDTO.fromEntity(cancelledReservation);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(ApiResponse.success(dto, "Reservation cancelled successfully"));
+        } catch (RuntimeException e) {
+            System.out.println("Controller error: " + e.getMessage());
+            return ResponseEntity.badRequest()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(ApiResponse.error(e.getMessage()));
         }
     }
 }

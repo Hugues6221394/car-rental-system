@@ -128,6 +128,7 @@ const CarsPage = () => {
                             reservations: car.reservations,
                           }}
                           showReserveButton={false}
+                          showCancelButton={true}
                           currentDate={currentDate}
                           onReservationUpdate={handleReservationUpdate}
                       />
@@ -168,6 +169,7 @@ const CarsPage = () => {
                               reservations: car.reservations,
                             }}
                             showReserveButton={true}
+                            showCancelButton={false}
                             currentDate={currentDate}
                             onReservationUpdate={handleReservationUpdate}
                         />
