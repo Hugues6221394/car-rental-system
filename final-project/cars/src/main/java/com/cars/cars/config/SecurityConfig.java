@@ -41,16 +41,17 @@ public class SecurityConfig {
                                 "/api/auth/reset-password",
                                 "/api/auth/refresh",
                                 "/api/auth/debug-totp",
-                                "/api/auth//verify-totp-setup"
+                                "/api/auth/verify-totp-setup"
                         ).permitAll()
 
                         .requestMatchers(HttpMethod.POST, "/api/payments/initiate").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/payments").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/api/payments/**").authenticated()
-                        .requestMatchers(HttpMethod.PATCH, "/api/payments/**/status").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/payments/*/status").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/reservations/*/status").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/totp/status").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/totp/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/images/**").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/payments/**").authenticated()
                         .requestMatchers("/api/notifications/**").authenticated()
                         .anyRequest().authenticated()
                 );
