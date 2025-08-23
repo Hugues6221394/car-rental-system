@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { PageHeader } from "@/components/PageHeaders";
 import { request } from "@/lib/api";
-import { PageContainer } from "@/components/PageContaire"; // Fixed typo
+import { PageContainer } from "@/components/PageContaire";
 import { useAuth } from "@/components/AuthContext";
 import type { ReservationDTO } from "@/types";
 import ReservationsList from "@/components/admin/ReservationList";
@@ -21,6 +21,9 @@ export default function ReservationPage() {
   ).length;
   const completedCount = reservations.filter(
       (r) => r.status === "COMPLETED"
+  ).length;
+  const cancelledCount = reservations.filter(
+      (r) => r.status === "CANCELLED"
   ).length;
   const totalRevenue = reservations
       .filter((r) => r.status === "COMPLETED")
@@ -50,10 +53,6 @@ export default function ReservationPage() {
   };
 
   const handleDeleteReservation = async (reservationId: string) => {
-    if (!confirm("Are you sure you want to delete this completed reservation? This action cannot be undone.")) {
-      return;
-    }
-
     try {
       const response = await request({
         method: "DELETE",
@@ -63,11 +62,9 @@ export default function ReservationPage() {
       if (response.data.success) {
         // Remove the deleted reservation from the list
         setReservations(prev => prev.filter(r => r.id !== reservationId));
-        alert("Reservation deleted successfully!");
       }
     } catch (error) {
       console.error("Error deleting reservation:", error);
-      alert("Failed to delete reservation. Please try again.");
     }
   };
 
@@ -107,6 +104,12 @@ export default function ReservationPage() {
                 trend="Successfully finished"
             />
             <AdminStatsCard
+                title="Cancelled Reservations"
+                value={cancelledCount}
+                icon="calendar"
+                trend="Cancelled by user/admin"
+            />
+            <AdminStatsCard
                 title="Total Revenue"
                 value={`$${totalRevenue.toFixed(2)}`}
                 icon="money"
@@ -120,7 +123,7 @@ export default function ReservationPage() {
               <ReservationsList
                   reservations={reservations}
                   onUpdate={fetchReservations}
-                  onDelete={handleDeleteReservation} // Pass delete handler
+                  onDelete={handleDeleteReservation}
               />
           )}
         </div>

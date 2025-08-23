@@ -238,8 +238,8 @@ export default function ReservationsList({
                                 </button>
                             )}
 
-                            {/* Delete button for completed reservations */}
-                            {reservation.status === "COMPLETED" && (
+                            {/* Delete button for completed and cancelled reservations */}
+                            {(reservation.status === "COMPLETED" || reservation.status === "CANCELLED") && (
                                 <button
                                     onClick={() => handleDelete(reservation.id)}
                                     disabled={isLoading === reservation.id}
