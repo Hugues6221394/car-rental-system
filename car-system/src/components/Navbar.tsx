@@ -27,7 +27,7 @@ export default function Navbar() {
                 to="/"
                 className="flex items-center space-x-2 group transition-all duration-300"
             >
-            <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+            <span className="text-xl font-bold bg-gradient-to-r from-red-600 to-red-500 bg-clip-text text-transparent">
               Car Rental
             </span>
             </Link>
@@ -81,7 +81,7 @@ export default function Navbar() {
 
               {isLoading ? (
                   <div className="flex items-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-r-transparent"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-red-600 border-r-transparent"></div>
                     <span className="text-sm text-muted-foreground">
                   Loading...
                 </span>
@@ -90,7 +90,7 @@ export default function Navbar() {
                   <div className="flex items-center space-x-3">
                     {user && (
                         <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-accent/30 backdrop-blur-sm">
-                          <div className="w-6 h-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center">
+                          <div className="w-6 h-6 bg-gradient-to-r from-red-600 to-red-700 rounded-full flex items-center justify-center">
                       <span className="text-white text-xs font-medium">
                         {user.email?.charAt(0).toUpperCase()}
                       </span>
@@ -119,7 +119,7 @@ export default function Navbar() {
               ) : (
                   <Button
                       onClick={() => navigate({ to: "/sign-in" })}
-                      className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-200"
+                      className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white shadow-lg hover:shadow-xl transition-all duration-200"
                   >
                 <span className="flex items-center space-x-2">
                   <span>Sign In</span>

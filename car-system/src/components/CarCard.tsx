@@ -39,23 +39,36 @@ const CarCard: React.FC<CarCardProps> = ({
 
   // Function to get the correct image path - FIXED
   const getImagePath = (imageUrl: string | null) => {
-    console.log('Image URL received:', imageUrl);
+    console.log('Image URL received from backend:', imageUrl);
 
-    if (!imageUrl) return "/cars/default-car.png";
+    if (!imageUrl) {
+      console.log('No image URL provided, using default car image');
+      return "/cars/default-car.png";
+    }
 
-    // If it's already a full URL or absolute path
-    if (imageUrl.startsWith('http') || imageUrl.startsWith('/')) {
-      // For development, ensure backend URLs are properly formed
-      if (imageUrl.startsWith('/uploads/')) {
-        return `http://localhost:8080${imageUrl}`;
-      }
+    // If it's already a full URL (http/https)
+    if (imageUrl.startsWith('http')) {
+      console.log('Full URL detected:', imageUrl);
       return imageUrl;
     }
 
-    // If it's just a filename, construct the full path
-    return `/cars/${imageUrl}`;
-  };
+    // If it's a relative path starting with /cars/ (what your backend returns)
+    if (imageUrl.startsWith('/cars/')) {
+      console.log('Relative cars path detected:', imageUrl);
+      return imageUrl;
+    }
 
+    // If it's just a filename without path (fallback)
+    if (!imageUrl.startsWith('/')) {
+      const constructedPath = `/cars/${imageUrl}`;
+      console.log('Constructed cars path from filename:', constructedPath);
+      return constructedPath;
+    }
+
+    // For any other absolute paths that don't start with /cars/
+    console.log('Other absolute path, using as-is:', imageUrl);
+    return imageUrl;
+  };
   const isCarAvailable = () => {
     if (!car.isAvailable) return false;
     if (!car.reservations || car.reservations.length === 0) return true;
@@ -250,7 +263,7 @@ const CarCard: React.FC<CarCardProps> = ({
             <span className="text-sm text-gray-600 dark:text-gray-400">
               Price per day
             </span>
-              <p className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-600">
+              <p className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800 dark:from-red-400 dark:to-red-600">
                 ${Number(car.pricePerDay).toFixed(2)}
               </p>
             </div>
@@ -261,7 +274,7 @@ const CarCard: React.FC<CarCardProps> = ({
                     disabled={!isCarAvailable()}
                     className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
                         isCarAvailable()
-                            ? "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
+                            ? "bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800"
                             : "bg-gray-200 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-400"
                     }`}
                 >

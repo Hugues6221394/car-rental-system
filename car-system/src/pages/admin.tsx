@@ -143,7 +143,7 @@ export default function AdminPage() {
   return (
       <PageContainer className="p-0">
         {/* Admin Header with Global Search */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-t-2xl">
+        <div className="bg-gradient-to-r from-red-600 to-red-800 text-white rounded-t-2xl">
           <div className="px-6 py-8">
             <div className="flex flex-col gap-6">
               {/* Header with title and button */}
@@ -152,7 +152,7 @@ export default function AdminPage() {
                   <div className="flex items-center gap-2">
                     <h1 className="text-2xl md:text-3xl font-bold">Admin Dashboard</h1>
                   </div>
-                  <p className="text-blue-100">Logged in as: {user.email}</p>
+                  <p className="text-red-100">Logged in as: {user.email}</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Button asChild variant="secondary" size="sm" className="flex-1 sm:flex-none">

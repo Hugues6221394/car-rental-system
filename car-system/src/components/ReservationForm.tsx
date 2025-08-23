@@ -210,7 +210,7 @@ export default function ReservationForm({
                 minDate={minDate}
                 filterDate={(date) => !isDateDisabled(date)}
                 dateFormat="MMMM d, yyyy"
-                className="w-full px-3 py-2 border rounded-lg dark:bg-navy-800 dark:border-navy-700 dark:text-white"
+                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 placeholderText="Select start date"
             />
             <p className="text-xs text-gray-500 mt-1">
@@ -230,7 +230,7 @@ export default function ReservationForm({
                 minDate={startDate ? addDays(startDate, 1) : minDate}
                 filterDate={(date) => !isDateDisabled(date)}
                 dateFormat="MMMM d, yyyy"
-                className="w-full px-3 py-2 border rounded-lg dark:bg-navy-800 dark:border-navy-700 dark:text-white"
+                className="w-full px-3 py-2 border rounded-lg dark:bg-gray-800 dark:border-gray-700 dark:text-white"
                 placeholderText="Select end date"
             />
             <p className="text-xs text-gray-500 mt-1">
@@ -240,7 +240,7 @@ export default function ReservationForm({
         </div>
 
         {startDate && endDate && (
-            <div className="bg-gray-50 dark:bg-navy-900/50 p-4 rounded-lg">
+            <div className="bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg">
               <p className="text-lg font-semibold dark:text-white">
                 Total Price: $
                 {(differenceInDays(endDate, startDate) * pricePerDay).toFixed(2)}
@@ -267,9 +267,9 @@ export default function ReservationForm({
         <button
             type="submit"
             disabled={isLoading || !startDate || !endDate || !userId}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700
+            className="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700
                  disabled:opacity-50 disabled:cursor-not-allowed transition-colors
-                 dark:bg-blue-500 dark:hover:bg-blue-600"
+                 dark:bg-red-500 dark:hover:bg-red-600"
         >
           {isLoading ? "Creating Reservation..." : "Confirm Reservation & Pay"}
         </button>

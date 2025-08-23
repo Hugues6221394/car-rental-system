@@ -21,7 +21,6 @@ export default function HomePage() {
     ];
 
     // Static cars for reservation
-// Static cars for reservation
     const availableCars = [
         {
             id: 1,
@@ -300,16 +299,16 @@ export default function HomePage() {
 
     return (
         <>
-            <div className="min-h-screen bg-gray-50 dark:bg-navy-900">
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
                 {/* Hero Section */}
                 <section className="relative min-h-screen overflow-hidden">
                     {/* Animated Background */}
                     <div className="absolute inset-0">
-                        <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-blue-700 to-purple-800" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-red-600 via-red-700 to-red-800" />
                         <div className="absolute inset-0 bg-black/20" />
                         {/* Floating shapes */}
-                        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400/10 rounded-full blur-3xl animate-pulse" />
-                        <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400/10 rounded-full blur-3xl animate-pulse delay-1000" />
+                        <div className="absolute top-20 left-10 w-72 h-72 bg-red-400/10 rounded-full blur-3xl animate-pulse" />
+                        <div className="absolute bottom-20 right-10 w-96 h-96 bg-red-400/10 rounded-full blur-3xl animate-pulse delay-1000" />
                     </div>
 
                     <div className="relative z-10 container mx-auto px-4 py-20">
@@ -318,7 +317,7 @@ export default function HomePage() {
                             <div className="space-y-8 animate-fade-in-up">
                                 <div className="space-y-6">
                                     <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-white">
-                                        <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                                        <span className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></span>
                                         <span className="text-sm font-medium">
                       Now Available 24/7
                     </span>
@@ -326,12 +325,12 @@ export default function HomePage() {
 
                                     <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-tight">
                                         Your Perfect
-                                        <span className="block bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
+                                        <span className="block bg-gradient-to-r from-red-300 to-red-400 bg-clip-text text-transparent">
                       Ride Awaits
                     </span>
                                     </h1>
 
-                                    <p className="text-xl text-blue-100 max-w-xl leading-relaxed">
+                                    <p className="text-xl text-red-100 max-w-xl leading-relaxed">
                                         Experience premium car rentals with our cutting-edge
                                         platform. From luxury sedans to rugged SUVs - find your
                                         perfect match in seconds.
@@ -345,7 +344,7 @@ export default function HomePage() {
                                         className={cn(
                                             "group flex items-center justify-center gap-2",
                                             "px-8 py-4 rounded-2xl",
-                                            "bg-white text-blue-600",
+                                            "bg-white text-red-600",
                                             "font-bold text-lg",
                                             "transition-all duration-300",
                                             "hover:bg-gray-50 hover:scale-105",
@@ -408,11 +407,11 @@ export default function HomePage() {
                                                 index * 100
                                             }`}
                                         >
-                                            <div className="text-2xl">{stat.icon}</div>
+                                            <div className="text-2xl text-red-300">{stat.icon}</div>
                                             <div className="text-2xl font-bold text-white">
                                                 {stat.number}
                                             </div>
-                                            <div className="text-blue-100 text-sm">{stat.label}</div>
+                                            <div className="text-red-100 text-sm">{stat.label}</div>
                                         </div>
                                     ))}
                                 </div>
@@ -434,8 +433,8 @@ export default function HomePage() {
                                                 Premium Quality
                                             </div>
                                         </div>
-                                        <div className="absolute bottom-10 left-10 bg-green-500/20 backdrop-blur-sm rounded-2xl p-4 animate-pulse">
-                                            <div className="text-green-300 text-sm font-medium">
+                                        <div className="absolute bottom-10 left-10 bg-red-500/20 backdrop-blur-sm rounded-2xl p-4 animate-pulse">
+                                            <div className="text-red-300 text-sm font-medium">
                                                 ✓ Available Now
                                             </div>
                                         </div>
@@ -457,7 +456,7 @@ export default function HomePage() {
                 <section
                     id="cars"
                     data-animate
-                    className="py-20 bg-white dark:bg-navy-800"
+                    className="py-20 bg-white dark:bg-gray-800"
                 >
                     <div className="container mx-auto px-4">
                         <div
@@ -481,8 +480,8 @@ export default function HomePage() {
                                 <div
                                     key={car.id}
                                     className={cn(
-                                        "bg-white dark:bg-navy-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2",
-                                        "border border-gray-200 dark:border-navy-600",
+                                        "bg-white dark:bg-gray-700 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2",
+                                        "border border-gray-200 dark:border-gray-600",
                                         isVisible.cars
                                             ? "opacity-100 translate-y-0"
                                             : "opacity-0 translate-y-10"
@@ -495,7 +494,7 @@ export default function HomePage() {
                                             alt={car.name}
                                             className="w-full h-full object-cover"
                                         />
-                                        <div className="absolute top-2 right-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
+                                        <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded">
                                             {car.type}
                                         </div>
                                     </div>
@@ -504,7 +503,7 @@ export default function HomePage() {
                                             {car.name}
                                         </h3>
                                         <div className="flex items-center mb-4">
-                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                      <span className="text-2xl font-bold text-red-600 dark:text-red-400">
                         {car.price}
                       </span>
                                         </div>
@@ -512,7 +511,7 @@ export default function HomePage() {
                                             {car.features.map((feature, i) => (
                                                 <span
                                                     key={i}
-                                                    className="text-xs bg-gray-100 dark:bg-navy-600 text-gray-800 dark:text-gray-200 px-2 py-1 rounded"
+                                                    className="text-xs bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200 px-2 py-1 rounded"
                                                 >
                           {feature}
                         </span>
@@ -523,10 +522,10 @@ export default function HomePage() {
                                             className={cn(
                                                 "w-full block text-center",
                                                 "px-4 py-3 rounded-lg",
-                                                "bg-blue-600 text-white",
+                                                "bg-red-600 text-white",
                                                 "font-medium",
                                                 "transition-all duration-300",
-                                                "hover:bg-blue-700 hover:shadow-md"
+                                                "hover:bg-red-700 hover:shadow-md"
                                             )}
                                         >
                                             Reserve Now
@@ -542,7 +541,7 @@ export default function HomePage() {
                 <section
                     id="features"
                     data-animate
-                    className="py-20 bg-gray-50 dark:bg-navy-900"
+                    className="py-20 bg-gray-50 dark:bg-gray-900"
                 >
                     <div className="container mx-auto px-4">
                         <div
@@ -568,8 +567,8 @@ export default function HomePage() {
                                     key={feature.title}
                                     className={cn(
                                         "group p-8 rounded-2xl transition-all duration-500 hover:scale-105",
-                                        "bg-white dark:bg-navy-700 hover:bg-gray-50 dark:hover:bg-navy-600",
-                                        "border border-gray-200 dark:border-navy-600 hover:border-blue-200 dark:hover:border-blue-500",
+                                        "bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600",
+                                        "border border-gray-200 dark:border-gray-600 hover:border-red-200 dark:hover:border-red-500",
                                         "shadow-sm hover:shadow-xl",
                                         isVisible.features
                                             ? "opacity-100 translate-y-0"
@@ -577,7 +576,7 @@ export default function HomePage() {
                                     )}
                                     style={{ transitionDelay: `${index * 100}ms` }}
                                 >
-                                    <div className="text-blue-600 dark:text-blue-400 mb-4 group-hover:scale-110 transition-transform duration-300">
+                                    <div className="text-red-600 dark:text-red-400 mb-4 group-hover:scale-110 transition-transform duration-300">
                                         {feature.icon}
                                     </div>
                                     <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
@@ -596,7 +595,7 @@ export default function HomePage() {
                 <section
                     id="testimonials"
                     data-animate
-                    className="py-20 bg-white dark:bg-navy-800"
+                    className="py-20 bg-white dark:bg-gray-800"
                 >
                     <div className="container mx-auto px-4">
                         <div
@@ -620,8 +619,8 @@ export default function HomePage() {
                                 <div
                                     key={testimonial.name}
                                     className={cn(
-                                        "bg-white dark:bg-navy-700 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-500",
-                                        "border border-gray-200 dark:border-navy-600",
+                                        "bg-white dark:bg-gray-700 p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-500",
+                                        "border border-gray-200 dark:border-gray-600",
                                         isVisible.testimonials
                                             ? "opacity-100 translate-y-0"
                                             : "opacity-0 translate-y-10"
@@ -632,7 +631,7 @@ export default function HomePage() {
                                         {[...Array(testimonial.rating)].map((_, i) => (
                                             <svg
                                                 key={i}
-                                                className="w-5 h-5 text-yellow-400"
+                                                className="w-5 h-5 text-red-400"
                                                 fill="currentColor"
                                                 viewBox="0 0 20 20"
                                             >
@@ -658,20 +657,20 @@ export default function HomePage() {
                 </section>
 
                 {/* CTA Section */}
-                <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-700">
+                <section className="py-20 bg-gradient-to-r from-red-600 to-red-800">
                     <div className="container mx-auto px-4 text-center">
                         <div className="max-w-3xl mx-auto space-y-8">
                             <h2 className="text-4xl font-bold text-white">
                                 Ready to Hit the Road?
                             </h2>
-                            <p className="text-xl text-blue-100">
+                            <p className="text-xl text-red-100">
                                 Join thousands of satisfied customers and experience the future
                                 of car rental today.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <Link
                                     to="/sign-up"
-                                    className="px-8 py-4 bg-white text-blue-600 rounded-2xl font-bold text-lg hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-xl"
+                                    className="px-8 py-4 bg-white text-red-600 rounded-2xl font-bold text-lg hover:bg-gray-50 transition-all duration-300 hover:scale-105 shadow-xl"
                                 >
                                     Get Started Free
                                 </Link>

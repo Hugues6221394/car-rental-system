@@ -262,7 +262,7 @@ const UsersList: React.FC = () => {
       <PageContainer className="p-0">
         <PageHeader title="Users Management" username={userName} />
 
-        <div className="p-6 bg-gray-50 dark:bg-navy-900/50 min-h-[calc(100vh-16rem)]">
+        <div className="p-6 bg-gray-50 dark:bg-gray-900/50 min-h-[calc(100vh-16rem)]">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
             <AdminStatsCard
                 title="Total Users"
@@ -284,7 +284,7 @@ const UsersList: React.FC = () => {
             />
           </div>
 
-          <div className="bg-white dark:bg-navy-700 rounded-lg shadow-sm border border-gray-200 dark:border-navy-600 p-4 mb-6">
+          <div className="bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 p-4 mb-6">
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
               <div className="flex-1 w-full">
                 <Input
@@ -452,7 +452,7 @@ const UsersList: React.FC = () => {
                               onChange={(e) =>
                                   setNewUser({ ...newUser, role: e.target.value })
                               }
-                              className="w-full rounded-md border border-gray-300 dark:border-navy-500 bg-white dark:bg-navy-800 p-2 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-navy-300"
+                              className="w-full rounded-md border border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-800 p-2 text-sm focus:ring-2 focus:ring-red-500 dark:focus:ring-red-300"
                           >
                             <option value="USER">User</option>
                             <option value="ADMIN">Admin</option>
@@ -472,7 +472,7 @@ const UsersList: React.FC = () => {
                         <Button
                             type="submit"
                             disabled={isLoading === (editingUser?.id || -1)}
-                            className="px-4 py-2"
+                            className="px-4 py-2 bg-red-600 hover:bg-red-700"
                         >
                           {isLoading === (editingUser?.id || -1) ? (
                               <span className="flex items-center">
@@ -512,11 +512,11 @@ const UsersList: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-navy-700 rounded-lg shadow-sm border border-gray-200 dark:border-navy-600 overflow-hidden">
+          <div className="bg-white dark:bg-gray-700 rounded-lg shadow-sm border border-gray-200 dark:border-gray-600 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                <tr className="bg-gray-50 dark:bg-navy-800">
+                <tr className="bg-gray-50 dark:bg-gray-800">
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     User
                   </th>
@@ -528,17 +528,17 @@ const UsersList: React.FC = () => {
                   </th>
                 </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200 dark:divide-navy-600">
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
                 {filteredUsers.map((user) => (
                     <tr
                         key={user.id}
-                        className="hover:bg-gray-50 dark:hover:bg-navy-600 transition-colors"
+                        className="hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
                     >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="h-10 w-10 flex-shrink-0">
-                            <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center">
-                            <span className="text-blue-600 dark:text-blue-200 font-medium">
+                            <div className="h-10 w-10 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center">
+                            <span className="text-red-600 dark:text-red-200 font-medium">
                               {(
                                   user.firstName?.[0] || user.email[0]
                               ).toUpperCase()}
@@ -564,7 +564,7 @@ const UsersList: React.FC = () => {
                                 handleRoleChange(user.id, e.target.value)
                             }
                             disabled={isLoading === user.id}
-                            className="text-sm rounded-md border-gray-300 dark:border-navy-500 bg-white dark:bg-navy-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 dark:focus:ring-navy-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                            className="text-sm rounded-md border-gray-300 dark:border-gray-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-red-500 dark:focus:ring-red-300 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                           <option value="USER">User</option>
                           <option value="ADMIN">Admin</option>

@@ -160,11 +160,11 @@ export const AuthForm = ({ type, title, subtitle }: AuthProps) => {
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
           <div className="max-w-md w-full">
             <div className="bg-white dark:bg-gray-800 shadow-sm rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-              <div className="bg-blue-600 px-6 py-8 text-center">
+              <div className="bg-red-600 px-6 py-8 text-center">
                 <h1 className="text-2xl font-bold text-white mb-1">
                   Reset Password
                 </h1>
-                <p className="text-blue-100">
+                <p className="text-red-100">
                   Enter your email to receive a password reset link
                 </p>
               </div>
@@ -226,7 +226,7 @@ export const AuthForm = ({ type, title, subtitle }: AuthProps) => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
         <div className="max-w-md w-full">
           <div className="bg-white dark:bg-gray-800 shadow-sm rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="bg-blue-600 px-6 py-8 text-center">
+            <div className="bg-red-600 px-6 py-8 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-white/20 backdrop-blur-sm mb-4">
                 <svg
                     className="w-10 h-10 text-white"
@@ -243,7 +243,7 @@ export const AuthForm = ({ type, title, subtitle }: AuthProps) => {
                 </svg>
               </div>
               <h1 className="text-2xl font-bold text-white mb-1">{title}</h1>
-              {subtitle && <p className="text-blue-100">{subtitle}</p>}
+              {subtitle && <p className="text-red-100">{subtitle}</p>}
             </div>
 
             <div className="m-5">
@@ -281,7 +281,7 @@ export const AuthForm = ({ type, title, subtitle }: AuthProps) => {
                     autoComplete={isSignin ? "current-password" : "new-password"}
                 />
 
-                <Button type="submit" className="w-full" disabled={isLoading}>
+                <Button type="submit" className="w-full bg-red-600 hover:bg-red-700" disabled={isLoading}>
                   {isLoading ? (
                       <div className="flex items-center justify-center gap-2">
                         <svg
@@ -318,7 +318,7 @@ export const AuthForm = ({ type, title, subtitle }: AuthProps) => {
                   <div className="mt-4 text-center">
                     <button
                         type="button"
-                        className="text-sm text-blue-600 hover:underline dark:text-blue-400"
+                        className="text-sm text-red-600 hover:underline dark:text-red-400"
                         onClick={() => setShowForgotPassword(true)}
                     >
                       Forgot Password?

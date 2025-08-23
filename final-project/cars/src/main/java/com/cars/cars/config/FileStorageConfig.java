@@ -12,8 +12,7 @@ import java.time.format.DateTimeFormatter;
 @Configuration
 public class FileStorageConfig implements WebMvcConfigurer {
 
-    // Use a proper path that exists and is writable
-    @Value("${file.upload-dir:./uploads}")
+    @Value("${file.upload-dir:D:/Desktop/AUCA/WEBTECH/We_tech_final/car-system/public/cars}")
     private String uploadDir;
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -25,12 +24,12 @@ public class FileStorageConfig implements WebMvcConfigurer {
         logInfo("Configuring resource handler");
         logInfo("Upload directory path: " + uploadPath);
 
-        // Serve uploaded files from /uploads/**
-        registry.addResourceHandler("/uploads/**")
+        // Serve uploaded files from /cars/** (not /uploads/**)
+        registry.addResourceHandler("/cars/**")
                 .addResourceLocations("file:" + uploadPath + "/");
 
         logInfo("Resource handler configured successfully");
-        logInfo("Resource pattern: /uploads/**");
+        logInfo("Resource pattern: /cars/**");
         logInfo("Resource location: file:" + uploadPath + "/");
     }
 

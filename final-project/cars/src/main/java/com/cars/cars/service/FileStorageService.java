@@ -18,7 +18,7 @@ import java.util.UUID;
 @Service
 public class FileStorageService {
 
-    @Value("${file.upload-dir:./uploads}")
+    @Value("${file.upload-dir:D:/Desktop/AUCA/WEBTECH/We_tech_final/car-system/public/cars}")
     private String uploadPath;
 
     private Path uploadDir;
@@ -65,7 +65,7 @@ public class FileStorageService {
         }
 
         // Return path that matches the resource handler configuration
-        return "/uploads/" + filename;
+        return "/cars/" + filename;
     }
 
     private boolean isValidImageExtension(String extension) {

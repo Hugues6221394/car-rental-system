@@ -22,18 +22,18 @@ interface ReservationsListProps {
 }
 
 export default function ReservationsList({
-  reservations: initialReservations,
-  onUpdate,
-}: ReservationsListProps) {
+                                           reservations: initialReservations,
+                                           onUpdate,
+                                         }: ReservationsListProps) {
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<ReservationStatus | "ALL">(
-    "ALL"
+      "ALL"
   );
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleStatusChange = async (
-    reservationId: string,
-    newStatus: ReservationStatus
+      reservationId: string,
+      newStatus: ReservationStatus
   ) => {
     try {
       setIsLoading(reservationId);
@@ -50,7 +50,7 @@ export default function ReservationsList({
     } catch (error: any) {
       console.error("Update error:", error);
       toast.error(
-        error.response?.data?.message || "Failed to update reservation"
+          error.response?.data?.message || "Failed to update reservation"
       );
     } finally {
       setIsLoading(null);
@@ -66,7 +66,7 @@ export default function ReservationsList({
       case "CANCELLED":
         return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
       case "COMPLETED":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300";
+        return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
       default:
         return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
     }
@@ -74,153 +74,153 @@ export default function ReservationsList({
 
   const filteredReservations = initialReservations.filter((reservation) => {
     const matchesStatus =
-      filterStatus === "ALL" || reservation.status === filterStatus;
+        filterStatus === "ALL" || reservation.status === filterStatus;
     const matchesSearch =
-      reservation.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      reservation.carDetails.toLowerCase().includes(searchTerm.toLowerCase());
+        reservation.userEmail.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        reservation.carDetails.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesStatus && matchesSearch;
   });
 
   return (
-    <div className="space-y-6">
-      {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1">
-            <Input
-              type="text"
-              placeholder="Search by email or car."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-          <select
-            className={cn(
-              "flex h-9 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm",
-              "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500"
-            )}
-            value={filterStatus}
-            onChange={(e) =>
-              setFilterStatus(e.target.value as ReservationStatus | "ALL")
-            }
-          >
-            <option value="ALL">All Statuses</option>
-            {RESERVATION_STATUSES.map((status) => (
-              <option key={status} value={status}>
-                {status.charAt(0) + status.slice(1).toLowerCase()}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Reservations List */}
-      <div className="divide-y divide-gray-200 dark:divide-gray-700">
-        {filteredReservations.length > 0 ? (
-          filteredReservations.map((reservation) => (
-            <div
-              key={reservation.id}
-              className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm mb-4"
+      <div className="space-y-6">
+        {/* Filters */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <Input
+                  type="text"
+                  placeholder="Search by email or car."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <select
+                className={cn(
+                    "flex h-9 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2 text-sm",
+                    "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-red-500"
+                )}
+                value={filterStatus}
+                onChange={(e) =>
+                    setFilterStatus(e.target.value as ReservationStatus | "ALL")
+                }
             >
-              <div className="flex flex-col md:flex-row gap-6">
-                {/* Car Image */}
-                <div className="w-full md:w-48 h-32 relative rounded-lg overflow-hidden bg-gray-100">
-                  {reservation.carImageUrl ? (
-                    <img
-                      src={reservation.carImageUrl}
-                      alt={reservation.carDetails}
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-gray-400">
-                      No image available
-                    </div>
-                  )}
-                </div>
-                <div className="flex-1 space-y-4">
-                  <div className="flex justify-between">
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        {reservation.carDetails}
-                      </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        User: {reservation.userEmail}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        From:{" "}
-                        {new Date(reservation.startDate).toLocaleDateString()}
-                      </p>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        To: {new Date(reservation.endDate).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
+              <option value="ALL">All Statuses</option>
+              {RESERVATION_STATUSES.map((status) => (
+                  <option key={status} value={status}>
+                    {status.charAt(0) + status.slice(1).toLowerCase()}
+                  </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
+        {/* Reservations List */}
+        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+          {filteredReservations.length > 0 ? (
+              filteredReservations.map((reservation) => (
+                  <div
+                      key={reservation.id}
+                      className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm mb-4"
+                  >
+                    <div className="flex flex-col md:flex-row gap-6">
+                      {/* Car Image */}
+                      <div className="w-full md:w-48 h-32 relative rounded-lg overflow-hidden bg-gray-100">
+                        {reservation.carImageUrl ? (
+                            <img
+                                src={reservation.carImageUrl}
+                                alt={reservation.carDetails}
+                                className="object-cover"
+                            />
+                        ) : (
+                            <div className="flex items-center justify-center h-full text-gray-400">
+                              No image available
+                            </div>
+                        )}
+                      </div>
+                      <div className="flex-1 space-y-4">
+                        <div className="flex justify-between">
+                          <div>
+                            <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100">
+                              {reservation.carDetails}
+                            </h3>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              User: {reservation.userEmail}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              From:{" "}
+                              {new Date(reservation.startDate).toLocaleDateString()}
+                            </p>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              To: {new Date(reservation.endDate).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-4">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
-                          reservation.status
-                        )}`}
+                          className={`px-3 py-1 rounded-full text-sm ${getStatusColor(
+                              reservation.status
+                          )}`}
                       >
                         {reservation.status}
                       </span>
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                            <span className="text-sm text-gray-700 dark:text-gray-300">
                         Total: ${reservation.totalPrice}
                       </span>
-                    </div>
+                          </div>
 
-                    <div className="flex gap-2">
-                      {reservation.status === "PENDING" && (
-                        <>
-                          <button
-                            onClick={() =>
-                              handleStatusChange(reservation.id, "CONFIRMED")
-                            }
-                            disabled={isLoading === reservation.id}
-                            className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
-                          >
-                            {isLoading === reservation.id
-                              ? "Processing..."
-                              : "Confirm"}
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleStatusChange(reservation.id, "CANCELLED")
-                            }
-                            disabled={isLoading === reservation.id}
-                            className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
-                          >
-                            Cancel
-                          </button>
-                        </>
-                      )}
+                          <div className="flex gap-2">
+                            {reservation.status === "PENDING" && (
+                                <>
+                                  <button
+                                      onClick={() =>
+                                          handleStatusChange(reservation.id, "CONFIRMED")
+                                      }
+                                      disabled={isLoading === reservation.id}
+                                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+                                  >
+                                    {isLoading === reservation.id
+                                        ? "Processing..."
+                                        : "Confirm"}
+                                  </button>
+                                  <button
+                                      onClick={() =>
+                                          handleStatusChange(reservation.id, "CANCELLED")
+                                      }
+                                      disabled={isLoading === reservation.id}
+                                      className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                                  >
+                                    Cancel
+                                  </button>
+                                </>
+                            )}
 
-                      {reservation.status === "CONFIRMED" && (
-                        <button
-                          onClick={() =>
-                            handleStatusChange(reservation.id, "COMPLETED")
-                          }
-                          disabled={isLoading === reservation.id}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                        >
-                          Complete
-                        </button>
-                      )}
+                            {reservation.status === "CONFIRMED" && (
+                                <button
+                                    onClick={() =>
+                                        handleStatusChange(reservation.id, "COMPLETED")
+                                    }
+                                    disabled={isLoading === reservation.id}
+                                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                                >
+                                  Complete
+                                </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+              ))
+          ) : (
+              <div className="p-6 text-center text-gray-500 dark:text-gray-400">
+                No matching reservations found
               </div>
-            </div>
-          ))
-        ) : (
-          <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-            No matching reservations found
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
   );
 }

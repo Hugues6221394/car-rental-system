@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/payments/**/status").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/totp/status").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/totp/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/images/**").authenticated()
                         .requestMatchers("/api/notifications/**").authenticated()
                         .anyRequest().authenticated()
                 );

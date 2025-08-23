@@ -47,9 +47,11 @@ public class Car {
     
     @Column(nullable = false)
     private BigDecimal pricePerDay;
-    
+
+    @Column(nullable = true)
     private String imageUrl;
-    
+
+
     @Column(nullable = false)
     private Boolean isAvailable = true;
 

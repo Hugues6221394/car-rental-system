@@ -93,7 +93,7 @@ const Dashboard: React.FC = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-background">
           <div className="text-center space-y-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-red-500 mx-auto"></div>
             <p className="text-gray-600 dark:text-gray-400">
               Loading dashboard...
             </p>
@@ -112,7 +112,7 @@ const Dashboard: React.FC = () => {
             <p className="text-gray-600 dark:text-gray-400">{error}</p>
             <button
                 onClick={() => fetchData(0)}
-                className="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+                className="inline-block bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition"
             >
               Try Again
             </button>
@@ -124,12 +124,12 @@ const Dashboard: React.FC = () => {
   return (
       <div className="min-h-screen bg-background">
         {/* Hero Section */}
-        <div className="relative h-[550px] overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-purple-800">
+        <div className="relative h-[550px] overflow-hidden bg-gradient-to-br from-red-600 via-red-700 to-red-800">
           <div className="absolute inset-0">
             <div className="absolute top-0 left-0 w-full h-full opacity-20">
               <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-white blur-3xl animate-pulse"></div>
               <div
-                  className="absolute bottom-1/3 right-1/3 w-96 h-96 rounded-full bg-blue-300 blur-3xl animate-pulse"
+                  className="absolute bottom-1/3 right-1/3 w-96 h-96 rounded-full bg-red-300 blur-3xl animate-pulse"
                   style={{ animationDelay: "1s" }}
               ></div>
             </div>
@@ -139,8 +139,8 @@ const Dashboard: React.FC = () => {
           <div className="relative container mx-auto px-4 h-full flex items-center">
             <div className="w-full lg:w-1/2 text-white z-10">
               <h1 className="text-5xl md:text-6xl font-bold mb-6 animate-fade-in">
-                Rent a car — <span className="text-blue-200">quickly</span> and{" "}
-                <span className="text-blue-200">easily</span>!
+                Rent a car — <span className="text-red-200">quickly</span> and{" "}
+                <span className="text-red-200">easily</span>!
               </h1>
               <p className="text-xl mb-8 text-gray-100 animate-slide-up max-w-xl leading-relaxed">
                 Streamline your car rental experience with our effortless booking
@@ -152,7 +152,7 @@ const Dashboard: React.FC = () => {
               >
                 <Link
                     to="/cars"
-                    className="bg-white dark:bg-gray-800 text-blue-600 dark:text-blue-400 px-8 py-3 rounded-full text-lg font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 flex items-center"
+                    className="bg-white dark:bg-gray-800 text-red-600 dark:text-red-400 px-8 py-3 rounded-full text-lg font-semibold hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 flex items-center"
                 >
                   Explore Cars
                   <svg
@@ -193,7 +193,7 @@ const Dashboard: React.FC = () => {
                 value: stats.availableCars,
                 icon: (
                     <svg
-                        className="w-10 h-10 text-blue-500"
+                        className="w-10 h-10 text-red-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -213,8 +213,8 @@ const Dashboard: React.FC = () => {
                     </svg>
                 ),
                 description: "Ready for immediate rental",
-                color: "from-blue-500 to-blue-600",
-                bgColor: "bg-blue-50 dark:bg-blue-900/20",
+                color: "from-red-500 to-red-600",
+                bgColor: "bg-red-50 dark:bg-red-900/20",
                 delay: "0ms",
               },
               {
@@ -222,7 +222,7 @@ const Dashboard: React.FC = () => {
                 value: stats.activeReservations,
                 icon: (
                     <svg
-                        className="w-10 h-10 text-purple-500"
+                        className="w-10 h-10 text-red-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -236,8 +236,8 @@ const Dashboard: React.FC = () => {
                     </svg>
                 ),
                 description: "Current bookings in progress",
-                color: "from-purple-500 to-purple-600",
-                bgColor: "bg-purple-50 dark:bg-purple-900/20",
+                color: "from-red-500 to-red-600",
+                bgColor: "bg-red-50 dark:bg-red-900/20",
                 delay: "150ms",
               },
               {
@@ -245,7 +245,7 @@ const Dashboard: React.FC = () => {
                 value: `$${(stats.averagePrice || 0).toFixed(2)}`,
                 icon: (
                     <svg
-                        className="w-10 h-10 text-green-500"
+                        className="w-10 h-10 text-red-500"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -259,8 +259,8 @@ const Dashboard: React.FC = () => {
                     </svg>
                 ),
                 description: "Average rental rate across fleet",
-                color: "from-green-500 to-green-600",
-                bgColor: "bg-green-50 dark:bg-green-900/20",
+                color: "from-red-500 to-red-600",
+                bgColor: "bg-red-50 dark:bg-red-900/20",
                 delay: "300ms",
               },
             ].map((stat, index) => (
@@ -308,7 +308,7 @@ const Dashboard: React.FC = () => {
             </div>
             <Link
                 to="/cars"
-                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                className="text-red-600 dark:text-red-400 hover:underline font-medium"
             >
               View all cars →
             </Link>
@@ -316,7 +316,7 @@ const Dashboard: React.FC = () => {
 
           {loading && currentPage > 0 && (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-red-500"></div>
                 <span className="ml-2 text-gray-600 dark:text-gray-400">
               Loading cars...
             </span>

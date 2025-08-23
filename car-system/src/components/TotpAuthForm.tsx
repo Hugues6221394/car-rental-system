@@ -54,7 +54,7 @@ export const TotpAuthForm = ({
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
         <div className="max-w-md w-full">
           <div className="bg-white dark:bg-gray-800 shadow-sm rounded-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="bg-blue-600 px-6 py-8 text-center">
+            <div className="bg-red-600 px-6 py-8 text-center">
               <div className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-white/20 backdrop-blur-sm mb-4">
                 <svg
                     className="w-10 h-10 text-white"
@@ -73,16 +73,16 @@ export const TotpAuthForm = ({
               <h1 className="text-2xl font-bold text-white mb-1">
                 Two-Factor Authentication
               </h1>
-              <p className="text-blue-100">
+              <p className="text-red-100">
                 Enter your 6-digit authentication code
               </p>
             </div>
 
             <div className="m-5">
-              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+              <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
                 <div className="flex items-start space-x-3">
                   <svg
-                      className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5"
+                      className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -95,10 +95,10 @@ export const TotpAuthForm = ({
                     />
                   </svg>
                   <div>
-                    <p className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                    <p className="text-sm font-medium text-red-800 dark:text-red-200">
                       Authentication Required
                     </p>
-                    <p className="text-sm text-blue-600 dark:text-blue-300 mt-1">
+                    <p className="text-sm text-red-600 dark:text-red-300 mt-1">
                       Open your authenticator app and enter the 6-digit code for{" "}
                       <span className="font-medium">{email}</span>
                     </p>
@@ -147,7 +147,7 @@ export const TotpAuthForm = ({
                   </Button>
                   <Button
                       type="submit"
-                      className="flex-1"
+                      className="flex-1 bg-red-600 hover:bg-red-700"
                       disabled={isLoading || totpCode.length !== 6}
                   >
                     {isLoading ? (
@@ -186,7 +186,7 @@ export const TotpAuthForm = ({
                   Having trouble?{" "}
                   <button
                       type="button"
-                      className="text-blue-600 dark:text-blue-400 hover:underline"
+                      className="text-red-600 dark:text-red-400 hover:underline"
                       onClick={() => {
                         toast.info(
                             "Contact support if you can't access your authenticator app"
